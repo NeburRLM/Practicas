@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{dipta-layouts/main(appName='MA3 - The Future', appAbbr='MA3')}">
+
+<header th:insert="taula/fragments/estils.html :: header(titol=${title}) "></header>
+
+<body>
+
+<div layout:fragment="content">
+    <header th:insert="taula/fragments/edit.html :: header(titol=${title}) "></header>
+    <div th:replace="taula/fragments/edit.html :: list(page=${page}, url = ${pageUrl}) "></div>
+    <div th:replace="taula/fragments/edit.html :: footer(txt=${totalText}) "></div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: plantilles-web
+  config:
+    import: configserver:${dipta.config.url}
+  external:
+    api:
+      base-url: http://localhost:8080/plantidoc/rest/template
+---
+spring:
+  jpa:
+    defer-datasource-initialization: true
+server:
+  port: 8081
+  name: http://localhost:${server.port}
+dipta:
+  datasource:
+#   TODO: CHANGE DB CONFIG, KEEP h2 only for testing purposes. Change dependencies on build.gradle
+    type: h2
+#    instance: XXX
+#    user: XXX
+#    pass: XXX
+
+  security:
+    ma3:
+      stop-attributes: userCertificate,certificateSubject,certificateType,certificatePolicyId
+      load-clients: true
+    cas:
+      unsecure:
+        - /public/**
+        - /static/**
+        - /css/**
+        - /js/**
+        - /node/**
+        - /theme/**
+
+  layout: # TODO : configurar layout segons necessitats
+    #logout-disabled: true
+    profile-selector: NONE
+    #profile-selector: ENS
+    #profile-selector: UNIT
+    menu-permission-type: DEFAULT
+
+logging:
+  level:
+    root: info
+    org.springframework.security: info
+    cat.dipta: trace
+
+---
+spring:
+  config:
+    activate:
+      on-profile: generate-openapi
+server:
+  port: 8765
+  name: http://localhost:8765

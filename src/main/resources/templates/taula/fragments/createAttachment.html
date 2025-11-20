@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header(titol)">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2 th:text="${titol}">Crear adjunt</h2>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="list(page, url)">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Nou adjunt</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form th:action="@{${isEdit != null && isEdit ? '/template/attachments/update' : '/template/attachments/save'}}"
+                              method="post"
+                              enctype="multipart/form-data">
+
+                            <input th:if="${isEdit != null && isEdit}" type="hidden" name="id" th:value="${attachment.id}">
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Codi:</label>
+                                <div class="col-sm-10">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="code"
+                                           th:value="${attachment != null ? attachment.code : ''}"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Nom adjunt:</label>
+                                <div class="col-sm-10">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="name"
+                                           th:value="${attachment != null ? attachment.name : ''}"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Seleccionar fitxer:</label>
+                                <div class="col-sm-10">
+                                    <div class="custom-file">
+                                        <input type="file"
+                                               class="custom-file-input"
+                                               id="fileInput"
+                                               name="file"
+                                               th:required="${isEdit == null || !isEdit}"
+                                               oninvalid="this.setCustomValidity('Cal seleccionar un arxiu.')"
+                                               oninput="setCustomValidity('')">
+                                        <label class="custom-file-label" for="fileInput">
+                    <span th:text="${attachment != null && attachment.fileName != null ? attachment.fileName : 'Cap arxiu seleccionat'}">
+                        Cap arxiu seleccionat
+                    </span>
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted" th:if="${isEdit != null && isEdit}">
+                                        Deixa en blanc si no vols canviar l'arxiu actual
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a th:href="@{/template/attachments}" class="btn btn-white btn-sm">
+                                        <i class="fa fa-ban"></i> Cancel·lar
+                                    </a>
+                                    <button class="btn btn-primary btn-sm" type="submit">
+                                        <i class="fa fa-save"></i>
+                                        <span th:text="${isEdit != null && isEdit ? 'Actualitzar' : 'Desar'}">Desar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function () {
+                    this.nextElementSibling.textContent = this.files[0]?.name || 'Cap arxiu seleccionat';
+                });
+            }
+        });
+    </script>
+</div>
+
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:border="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div th:fragment="header(titol)">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 th:text="${titol}">Nova plantilla</h2>
+        <div>
+
+            <!--Botó de estil-->
+            <button type="button" class="btn blue-bg" data-toggle="modal" data-target="#styleModal">
+                <i class="fa fa-paint-brush"></i> Associar estil
+            </button>
+
+            <div class="modal fade" id="styleModal" tabindex="-1" role="dialog" aria-labelledby="styleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="styleModalLabel">
+                                <i class="fa fa-paint-brush text-primary"></i> Assignar estil
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form id="styleForm">
+                            <div class="modal-body bg-light">
+                                <div class="form-group">
+                                    <label for="stylePlantilla" class="font-weight-bold text-secondary">
+                                        Estil:
+                                    </label>
+                                    <select class="form-control" id="stylePlantilla" name="stylePlantilla" required
+                                            oninvalid="this.setCustomValidity('Cal seleccionar un element de la llista.')"
+                                            oninput="setCustomValidity('')">
+                                        <option value="">-- Selecciona un estil --</option>
+                                        <!--Exempkje de com es veuria el selector-->
+                                        <option th:each="style : ${styles}"
+                                                th:value="${style.id}"
+                                                th:text="${style.code}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer bg-white border-0">
+                                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                    <i class="fa fa-ban mr-1"></i> Cancel·lar
+                                </button>
+                                <button type="submit" class="btn btn-primary shadow-sm">
+                                    <i class="fa fa-check-circle mr-1"></i> Acceptar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#configModal">
+                <i class="fa fa-cog"></i> Configuració
+            </button>
+            <!-- Modal de Configuració -->
+            <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="configModalLabel">
+                                <i class="fa fa-cog text-primary"></i> Configuració de la plantilla
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form id="configForm">
+                            <div class="modal-body bg-light">
+                                <div class="row">
+                                    <!-- Nom -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="configNom" class="font-weight-bold text-secondary">
+                                                <i class="fa fa-file-text-o text-primary mr-1"></i> Nom:
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="configNom"
+                                                   name="configNom"
+                                                   th:value="${template != null ? template.name : ''}"
+                                                   placeholder="Introdueix el nom..."
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Codi -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="configCodi" class="font-weight-bold text-secondary">
+                                                <i class="fa fa-code text-primary mr-1"></i> Codi:
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="configCodi"
+                                                   name="configCodi"
+                                                   th:value="${template != null ? template.code : ''}"
+                                                   placeholder="Codi de la plantilla..."
+                                                   required
+                                                   oninvalid="this.setCustomValidity('Cal introduir el codi.')"
+                                                   oninput="setCustomValidity('')">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Amplada -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="configAmplada" class="font-weight-bold text-secondary">
+                                                <i class="fa fa-arrows-h text-primary mr-1"></i> Amplada:
+                                            </label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configAmplada"
+                                                   name="configAmplada"
+                                                   th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.width : 910}"
+                                                   min="1"
+                                                   required
+                                                   oninvalid="this.setCustomValidity('Cal introduir l\'amplada.')"
+                                                   oninput="setCustomValidity('')">
+                                        </div>
+                                    </div>
+
+                                    <!-- Allargada -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="configAllargada" class="font-weight-bold text-secondary">
+                                                <i class="fa fa-arrows-v text-primary mr-1"></i> Allargada:
+                                            </label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configAllargada"
+                                                   name="configAllargada"
+                                                   value="997"
+                                                   min="1"
+                                                   required
+                                                   oninvalid="this.setCustomValidity('Cal introduir l\'allargada.')"
+                                                   oninput="setCustomValidity('')">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="font-weight-bold text-secondary mb-2">
+                                            <i class="fa fa-arrows text-primary mr-1"></i> Marges:
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Marge Superior -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="configMargeSuperior" class="text-secondary">Superior:</label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configMargeSuperior"
+                                                   th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.marginTop : 18}"
+                                                   value="18"
+                                                   min="0"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Inferior -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="configMargeInferior" class="text-secondary">Inferior:</label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configMargeInferior"
+                                                   name="configMargeInferior"
+                                                   th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.marginBottom : 18}"
+                                                   min="0"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Esquerre -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="configMargeEsquerre" class="text-secondary">Esquerre:</label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configMargeEsquerre"
+                                                   name="configMargeEsquerre"
+                                                   th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.marginLeft : 18}"
+                                                   min="0"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Dret -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="configMargeDret" class="text-secondary">Dret:</label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="configMargeDret"
+                                                   name="configMargeDret"
+                                                   th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.marginRight : 18}"
+                                                   min="0"
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer bg-white border-0">
+                                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                    <i class="fa fa-ban mr-1"></i> Cancel·lar
+                                </button>
+                                <button type="submit" class="btn btn-primary shadow-sm">
+                                    <i class="fa fa-save mr-1"></i> Guardar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!--Botó de propietats-->
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#propietatsModal">
+                <i class="fa fa-info-circle"></i> Propietats
+            </button>
+            <!-- Modal de Propietats -->
+            <div class="modal fade" id="propietatsModal" tabindex="-1" role="dialog"
+                 aria-labelledby="propietatsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="propietatsModalLabel">
+                                <i class="fa fa-info-circle text-info"></i> Propietats de la plantilla
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body bg-light">
+                            <div class="alert alert-info" th:if="${template == null}">
+                                <i class="fa fa-exclamation-circle mr-2"></i>
+                                Encara no s'ha desat la plantilla. Desa-la primer per veure les propietats.
+                            </div>
+
+                            <div th:if="${template != null}">
+                                <!-- Sección: Información General -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fa fa-info-circle mr-2"></i>Informació General
+                                        </h5>
+                                        <hr class="mt-0 mb-3"/>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- ID -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-hashtag text-info mr-1"></i> ID:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.id}">-</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nom -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-file-text-o text-info mr-1"></i> Nom:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.name}">-</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Codi -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-code text-info mr-1"></i> Codi:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.code}">-</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Estil -->
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-paint-brush text-info mr-1"></i> Estil:
+                                            </label>
+                                            <p class="form-control-plaintext"
+                                               th:text="${templateStyle != null ? templateStyle.name : '-'}">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sección: Informació de Creació i Actualització -->
+                                <div class="row mb-4 mt-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fa fa-history mr-2"></i>Historial
+                                        </h5>
+                                        <hr class="mt-0 mb-3"/>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Usuari Creador -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-user text-success mr-1"></i> Creat per:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.creatorUser ?: '-'}">
+                                                -</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Unitat Creadora -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-building-o text-success mr-1"></i> Unitat Creadora:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.creatorUnit ?: '-'}">
+                                                -</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Data de Creació -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-calendar-plus-o text-success mr-1"></i> Data de Creació:
+                                            </label>
+                                            <p class="form-control-plaintext"
+                                               th:text="${template.dateCreated != null ? #dates.format(template.dateCreated, 'dd/MM/yyyy HH:mm') : '-'}">
+                                                -</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Espacio vacío para alineación -->
+                                    <div class="col-md-6 mb-3"></div>
+
+                                    <!-- Usuari Actualització -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-user-circle text-warning mr-1"></i> Actualitzat per:
+                                            </label>
+                                            <p class="form-control-plaintext" th:text="${template.updateUser ?: '-'}">
+                                                -</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Data Última Modificació -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-calendar text-warning mr-1"></i> Última Modificació:
+                                            </label>
+                                            <p class="form-control-plaintext"
+                                               th:text="${template.lastUpdated != null ? #dates.format(template.lastUpdated, 'dd/MM/yyyy HH:mm') : '-'}">
+                                                -</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sección: Dimensions de Pàgina -->
+                                <div class="row mb-4 mt-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fa fa-file-o mr-2"></i>Dimensions de Pàgina
+                                        </h5>
+                                        <hr class="mt-0 mb-3"/>
+                                    </div>
+                                </div>
+
+                                <div class="row" th:if="${template.pageDimensions != null}">
+                                    <!-- Amplada -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-arrows-h text-primary mr-1"></i> Amplada:
+                                            </label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.width}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Allargada -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold text-secondary">
+                                                <i class="fa fa-arrows-v text-primary mr-1"></i> Allargada:
+                                            </label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.height}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" th:if="${template.pageDimensions != null}">
+                                    <div class="col-12 mb-2">
+                                        <label class="font-weight-bold text-secondary">
+                                            <i class="fa fa-arrows text-primary mr-1"></i> Marges:
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row" th:if="${template.pageDimensions != null}">
+                                    <!-- Marge Superior -->
+                                    <div class="col-md-3 col-sm-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="text-secondary small">Superior:</label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.marginTop}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Inferior -->
+                                    <div class="col-md-3 col-sm-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="text-secondary small">Inferior:</label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.marginBottom}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Esquerre -->
+                                    <div class="col-md-3 col-sm-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="text-secondary small">Esquerre:</label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.marginLeft}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Marge Dret -->
+                                    <div class="col-md-3 col-sm-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="text-secondary small">Dret:</label>
+                                            <p class="form-control-plaintext">
+                                                <span th:text="${template.pageDimensions.marginRight}">-</span> px
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mensaje si no hay dimensiones -->
+                                <div class="row" th:if="${template.pageDimensions == null}">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-exclamation-triangle mr-2"></i>
+                                            No s'han definit dimensions de pàgina
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer bg-white border-0">
+                            <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                <i class="fa fa-times mr-1"></i> Tancar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--Botó de desar-->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveModal">
+                <i class="fa fa-save"></i>
+                Desar
+            </button>
+            <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="saveModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="saveModalLabel">
+                                <i class="fa fa-save text-primary"></i> Desar plantilla
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form id="saveForm">
+                            <div class="modal-body bg-light">
+                                <div class="form-group">
+                                    <label for="nomPlantilla" class="font-weight-bold text-secondary">
+                                        <i class="fa fa-file-text-o text-primary mr-1"></i> Nom de la plantilla
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="nomPlantilla"
+                                           name="nomPlantilla"
+                                           th:value="${template != null ? template.name : ''}"
+                                           placeholder="Introdueix el nom..."
+                                           required
+                                           oninvalid="this.setCustomValidity('Cal introduir el nom de la plantilla.')"
+                                           oninput="setCustomValidity('')">
+                                </div>
+                            </div>
+
+                            <div class="modal-footer bg-white border-0">
+                                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                    <i class="fa fa-ban mr-1"></i> Cancel·lar
+                                </button>
+                                <button type="submit" class="btn btn-primary shadow-sm">
+                                    <i class="fa fa-save mr-1"></i> Guardar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:fragment="list(page, url)">
+    <!-- ↓  Ajuste de altura: deja más espacio para el footer -->
+    <div class="ibox-content p-3" style="height: calc(100vh - 220px);">
+        <div class="container-fluid h-100">
+            <div class="row h-100 d-flex align-items-stretch">
+
+                <!-- ===== COLUMNA IZQUIERDA: EDITOR ===== -->
+                <div class="col-md-8 d-flex flex-column mb-3 mb-md-0">
+                    <div class="card flex-grow-1 h-100" style="border: none;">
+                        <div class="card-body d-flex flex-column h-100">
+                            <form id="editorForm" th:action="@{/templates/taula/save}" method="post"
+                                  class="d-flex flex-column flex-grow-1 h-100">
+                                <div class="form-group d-flex flex-column flex-grow-1 h-100">
+                                    <label for="htmlContent" class="font-weight-bold mb-2">Codi HTML</label>
+                                    <textarea class="form-control flex-grow-1 h-100"
+                                              id="htmlContent"
+                                              name="htmlContent"
+                                              th:utext="${template != null and template.boxes != null and !template.boxes.isEmpty() ? allBoxesHtml : ''}"
+                                              placeholder="Introdueix aquí el teu codi HTML..."
+                                              required
+                                              style="font-size: 0.9em;"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== COLUMNA DERECHA: VARIABLES ===== -->
+                <div class="col-md-4 d-flex flex-column">
+                    <div class="card flex-grow-1 h-100" style="border: none;">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0 font-weight-bold">Variables</h5>
+                        </div>
+                        <div class="card-body d-flex flex-column overflow-hidden h-100">
+                            <!-- Buscador -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Cercar" id="searchVariable">
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="button" class="btn btn-primary btn-block mb-2" data-toggle="modal"
+                                        data-target="#importModelModal">
+                                    <i class="fa fa-upload mr-1"></i> Importar de model
+                                </button>
+                                <button type="button" class="btn btn-primary btn-block" data-toggle="modal"
+                                        data-target="#variableModal">
+                                    <i class="fa fa-plus mr-1"></i> Nova variable
+                                </button>
+                            </div>
+
+                            <!-- Modal Nova Variable -->
+                            <div class="modal fade" id="variableModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="variableModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="variableModalLabel">
+                                                <i class="fa fa-plus text-primary"></i> Nova variable
+                                            </h4>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Tancar">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <form id="variableForm">
+                                            <div class="modal-body bg-light">
+                                                <div class="form-group">
+                                                    <label for="variableName" class="font-weight-bold text-secondary">
+                                                        Nom de la variable:
+                                                    </label>
+                                                    <input type="text"
+                                                           class="form-control"
+                                                           id="variableName"
+                                                           name="variableName"
+                                                           placeholder="Introdueix el nom..."
+                                                           required
+                                                           oninvalid="this.setCustomValidity('Cal introduir el nom de la variable.')"
+                                                           oninput="setCustomValidity('')">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="variableType" class="font-weight-bold text-secondary">
+                                                        Tipus:
+                                                    </label>
+                                                    <select class="form-control"
+                                                            id="variableType"
+                                                            name="variableType"
+                                                            required
+                                                            oninvalid="this.setCustomValidity('Cal seleccionar un tipus.')"
+                                                            oninput="setCustomValidity('')">
+                                                        <option value="">-- Selecciona un tipus --</option>
+                                                        <option value="short">short</option>
+                                                        <option value="int">int</option>
+                                                        <option value="long">long</option>
+                                                        <option value="float">float</option>
+                                                        <option value="double">double</option>
+                                                        <option value="char">char</option>
+                                                        <option value="boolean">boolean</option>
+                                                        <option value="String">String</option>
+                                                        <option value="List">List</option>
+                                                        <option value="Map">Map</option>
+                                                        <option value="Data">Data</option>
+                                                        <option value="Html">Html</option>
+                                                        <option value="csv_html">taula csv o html</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-white border-0">
+                                                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                                    <i class="fa fa-ban mr-1"></i> Cancel·lar
+                                                </button>
+                                                <button type="submit" class="btn btn-primary shadow-sm">
+                                                    <i class="fa fa-check-circle mr-1"></i> Afegir
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Importar de Model -->
+                            <div class="modal fade" id="importModelModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="importModelModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="importModelModalLabel">
+                                                <i class="fa fa-upload text-primary"></i> Importar variables del model
+                                            </h4>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Tancar">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <form id="importModelForm">
+                                            <div class="modal-body bg-light">
+                                                <div class="form-group">
+                                                    <label for="modelId" class="font-weight-bold text-secondary">
+                                                        ID del model:
+                                                    </label>
+                                                    <input type="number"
+                                                           class="form-control"
+                                                           id="modelId"
+                                                           name="modelId"
+                                                           placeholder="Introdueix l'ID del model..."
+                                                           required
+                                                           min="1"
+                                                           oninvalid="this.setCustomValidity('Cal introduir un ID vàlid del model.')"
+                                                           oninput="setCustomValidity('')">
+                                                    <small class="form-text text-muted">
+                                                        <i class="fa fa-info-circle"></i> Introdueix l'identificador
+                                                        numèric del model del qual vols importar les variables.
+                                                    </small>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-white border-0">
+                                                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                                                    <i class="fa fa-ban mr-1"></i> Cancel·lar
+                                                </button>
+                                                <button type="submit" class="btn btn-primary shadow-sm">
+                                                    <i class="fa fa-upload mr-1"></i> Importar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lista -->
+                            <div class="list-group" style="overflow-y:scroll;height:200px;font-size: 0.9em">
+                                <ul class="list-group" id="variableList">
+                                    <!-- Renderizar variables existentes con Thymeleaf -->
+                                    <li th:if="${template != null and template.variables != null}"
+                                        th:each="variable : ${template.variables}"
+                                        class="list-group-item d-flex justify-content-between align-items-center btn btn-outline btn-defaul btn-w-m">
+                                        <span th:text="${variable.name}">Variable Name</span>
+                                        <span class="badge badge-secondary" th:text="${typeMap[variable.type]}">Type</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /.row -->
+        </div>
+    </div>
+    <script>
+        let hasUnsavedChanges = false;
+        document.addEventListener("DOMContentLoaded", () => {
+            const textarea = document.getElementById("htmlContent");
+
+            const searchInput = document.getElementById('searchVariable');
+            const listContainer = document.querySelector('.list-group ul');
+
+            let originalVariables = [];
+            // Cargar variables desde el backend si existen
+            const existingItems = listContainer.querySelectorAll('li');
+            existingItems.forEach(li => {
+                const nameSpan = li.querySelector('span:first-child');
+                const typeSpan = li.querySelector('.badge');
+                if (nameSpan && typeSpan) {
+                    originalVariables.push({
+                        name: nameSpan.textContent.trim(),
+                        type: typeSpan.textContent.trim()
+                    });
+                }
+            });
+
+
+
+            textarea.addEventListener('input', () => {
+                hasUnsavedChanges = true;
+            });
+
+            const variableForm = document.getElementById("variableForm");
+            if (variableForm) {
+                variableForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    const name = document.getElementById('variableName').value.trim();
+                    const type = document.getElementById('variableType').value;
+
+                    if (!name || !type) return;
+
+                    // Añadir la variable al array
+                    originalVariables.push({name, type});
+
+                    // Crear el elemento <li>
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center btn btn-outline btn-defaul btn-w-m';
+                    li.innerHTML = `${name} <span class="badge badge-secondary">${type}</span>`;
+
+                    listContainer.appendChild(li);
+
+                    hasUnsavedChanges = true;
+                    // Limpiar el formulario y cerrar el modal
+                    variableForm.reset();
+                    $('#variableModal').modal('hide');
+                });
+            }
+
+            // Manejar el formulario de importar modelo
+            const importModelForm = document.getElementById("importModelForm");
+            if (importModelForm) {
+                importModelForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    const modelId = document.getElementById('modelId').value.trim();
+
+                    if (!modelId) return;
+
+                    // Aquí harías la llamada al backend para obtener las variables del modelo
+                    // Por ahora, simulamos con un ejemplo
+                    console.log(`Importando variables del modelo con ID: ${modelId}`);
+
+                    // Ejemplo: Simular variables importadas (reemplaza esto con tu llamada real al backend)
+                    const importedVariables = [
+                        {name: 'variable_modelo_1', type: 'String'},
+                        {name: 'variable_modelo_2', type: 'int'},
+                        {name: 'variable_modelo_3', type: 'Data'}
+                    ];
+
+                    // Añadir las variables importadas al array y a la lista
+                    importedVariables.forEach(variable => {
+                        // Verificar si la variable ya existe
+                        if (!originalVariables.some(v => v.name === variable.name)) {
+                            originalVariables.push(variable);
+
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item d-flex justify-content-between align-items-center btn btn-outline btn-defaul btn-w-m';
+                            li.innerHTML = `${variable.name} <span class="badge badge-secondary">${variable.type}</span>`;
+
+                            listContainer.appendChild(li);
+                        }
+                    });
+
+                    hasUnsavedChanges = true;
+
+                    // Limpiar el formulario y cerrar el modal
+                    importModelForm.reset();
+                    $('#importModelModal').modal('hide');
+
+                    // Opcional: Mostrar mensaje de éxito
+                    console.log(`${importedVariables.length} variables importades correctament`);
+                });
+            }
+
+            // Función para insertar en textarea
+            function insertAtCursor(textarea, text) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const before = textarea.value.substring(0, start);
+                const after = textarea.value.substring(end);
+                textarea.value = before + text + after;
+                textarea.selectionStart = textarea.selectionEnd = start + text.length;
+                textarea.focus();
+            }
+
+            // Click en variable para insertar
+            listContainer.addEventListener("click", (e) => {
+                const li = e.target.closest(".list-group-item");
+                if (!li) return;
+
+                // Obtener el nombre del primer <span> en lugar de firstChild
+                const nameSpan = li.querySelector('span:first-child');
+                if (!nameSpan) return;
+
+                const variableName = nameSpan.textContent.trim();
+                insertAtCursor(textarea, `${'${' + variableName + '}'}`);
+            });
+
+            // Filtrado dinámico mientras se escribe
+            searchInput.addEventListener('input', (e) => {
+                const text = e.target.value.trim().toLowerCase();
+                console.log("Texto actual del buscador:", text);
+
+                // Limpiamos la lista antes de mostrar coincidencias
+                listContainer.innerHTML = '';
+
+                // Filtramos por coincidencia
+                const matched = text === ""
+                    ? originalVariables
+                    : originalVariables.filter(v => v.name.toLowerCase().includes(text));
+
+                console.log("Variables que coinciden:", matched);
+
+                // Reconstruimos los <li> con badge de tipo
+                matched.forEach(v => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center btn btn-outline btn-defaul btn-w-m';
+                    li.innerHTML = `${v.name} <span class="badge badge-secondary">${v.type}</span>`;
+                    listContainer.appendChild(li);
+                });
+
+                // Mensaje si hay coincidencia exacta
+                if (originalVariables.some(v => v.name.toLowerCase() === text)) {
+                    console.log(`¡La variable "${text}" ya existe en la lista!`);
+                }
+            });
+
+            window.addEventListener('beforeunload', (e) => {
+                if (hasUnsavedChanges) {
+                    e.preventDefault();
+                }
+            });
+
+            const styleForm = document.getElementById("styleForm");
+            const saveForm = document.getElementById("saveForm");
+
+            if (styleForm) {
+                styleForm.addEventListener("submit", (e) => submitStyleForm(e));
+            }
+            if (saveForm) {
+                saveForm.addEventListener("submit", (e) => submitSaveForm(e));
+            }
+            const configForm = document.getElementById("configForm");
+
+            if (configForm) {
+                configForm.addEventListener("submit", (e) => submitConfigForm(e));
+            }
+
+
+            function submitStyleForm(e) {
+                e.preventDefault();
+
+                const selectedStyle = document.getElementById('stylePlantilla').value;
+                if (!selectedStyle) return;
+
+                const mainForm = document.getElementById('editorForm');
+                const hiddenStyle = document.createElement('input');
+                hiddenStyle.type = 'hidden';
+                hiddenStyle.name = 'stylePlantilla';
+                hiddenStyle.value = selectedStyle;
+
+                mainForm.appendChild(hiddenStyle);
+
+                $('#styleModal').modal('hide');
+                mainForm.submit();
+            }
+
+            function submitSaveForm(e) {
+                e.preventDefault();
+
+                const nom = document.getElementById('nomPlantilla').value.trim();
+
+                if (!nom) return;
+
+                const mainForm = document.getElementById('editorForm');
+
+                const hiddenNom = document.createElement('input');
+                hiddenNom.type = 'hidden';
+                hiddenNom.name = 'nomPlantilla';
+                hiddenNom.value = nom;
+
+                mainForm.appendChild(hiddenNom);
+
+                $('#saveModal').modal('hide');
+                hasUnsavedChanges = false;
+                mainForm.submit();
+            }
+
+            function submitConfigForm(e) {
+                e.preventDefault();
+
+                const nom = document.getElementById('configNom').value.trim();
+                const codi = document.getElementById('configCodi').value.trim();
+                const amplada = document.getElementById('configAmplada').value;
+                const allargada = document.getElementById('configAllargada').value;
+                const margeSuperior = document.getElementById('configMargeSuperior').value;
+                const margeInferior = document.getElementById('configMargeInferior').value;
+                const margeEsquerre = document.getElementById('configMargeEsquerre').value;
+                const margeDret = document.getElementById('configMargeDret').value;
+
+                if (!nom || !codi) return;
+
+                const mainForm = document.getElementById('editorForm');
+
+                // Añadir campos ocultos al formulario principal
+                const fields = [
+                    {name: 'configNom', value: nom},
+                    {name: 'configCodi', value: codi},
+                    {name: 'configAmplada', value: amplada},
+                    {name: 'configAllargada', value: allargada},
+                    {name: 'configMargeSuperior', value: margeSuperior},
+                    {name: 'configMargeInferior', value: margeInferior},
+                    {name: 'configMargeEsquerre', value: margeEsquerre},
+                    {name: 'configMargeDret', value: margeDret}
+                ];
+
+                fields.forEach(field => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = field.name;
+                    hiddenInput.value = field.value;
+                    mainForm.appendChild(hiddenInput);
+                });
+
+                $('#configModal').modal('hide');
+
+                // Opcional: Mostrar mensaje de confirmación
+                console.log('Configuració guardada:', {nom, codi, amplada, allargada});
+
+                // Si quieres enviar el formulario inmediatamente:
+                // mainForm.submit();
+            }
+        });
+    </script>
+</div>
+
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer class="text-center text-muted mt-4" th:text="${txt}">
+    </footer>
+</div>
+
+
+</body>
+</html>
