@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header(titol)">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2 th:text="${titol}">Crear estil</h2>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="list(page, url)">
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Nou estil</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form id="styleForm">
+                            <input th:if="${isEdit != null && isEdit}" type="hidden" name="id" th:value="${style.id}">
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Codi:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="code"
+                                           th:value="${style != null ? style.code : ''}"
+                                           required
+                                           oninvalid="this.setCustomValidity('Cal introduir el codi de l\'estil.')"
+                                           oninput="setCustomValidity('')">
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Nom:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="name"
+                                           th:value="${style != null ? style.name : ''}"
+                                           required
+                                           oninvalid="this.setCustomValidity('Cal introduir el nom de l\'estil.')"
+                                           oninput="setCustomValidity('')">
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Ens Local:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <select class="form-control" name="ensLocal">
+                                        <option value="" selected hidden>-- Selecciona un ens local --</option>
+                                        <option value=""> </option>
+                                        <option th:if="${style != null && style.ensLocal != null}"
+                                                th:value="${style.ensLocal.id}"
+                                                th:text="${style.ensLocal.nom}"
+                                                selected></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Regles:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <textarea class="form-control"
+                                              name="rules"
+                                              rows="10"
+                                              th:text="${style != null ? style.rules : ''}"
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <div class="col-lg-4 col-md-6 col-sm-8 col-12 offset-lg-2 offset-md-3 offset-sm-2">
+                                    <div class="d-flex flex-column flex-sm-row">
+                                        <a th:href="@{/template/styles}" class="btn btn-white btn-sm mb-2 mb-sm-0">
+                                            <i class="fa fa-ban"></i> Cancel·lar
+                                        </a>
+                                        <button class="btn btn-primary btn-sm ml-sm-2" type="button" id="saveButton">
+                                            <i class="fa fa-save"></i> Desar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="successNotification" class="alert alert-success alert-dismissible" role="alert"
+         style="display: none; position: fixed; bottom: 5vh; right: 20px; left: 20px; z-index: 9999; width: auto; max-width: 400px;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <strong><i class="fa fa-check-circle"></i> Èxit!</strong> Estil guardat correctament
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Cargar ensLocals
+            fetch('/plantilles-web/template/ensLocals/list')
+                .then(response => response.json())
+                .then(ensLocals => {
+                    const select = document.querySelector('select[name="ensLocal"]');
+                    ensLocals.forEach(ensLocal => {
+                        const option = document.createElement('option');
+                        option.value = ensLocal.id;
+                        option.textContent = ensLocal.nom;
+                        select.appendChild(option);
+                    });
+
+                    // Si estamos en modo edición, seleccionar el valor actual
+                    const currentEnsLocalId = select.querySelector('option[selected]')?.value;
+                    if (currentEnsLocalId) {
+                        select.value = currentEnsLocalId;
+                    }
+                })
+                .catch(error => console.error('Error cargando ensLocals:', error));
+
+            const urlParams = new URLSearchParams(window.location.search);
+
+            const saved = urlParams.get('saved') === 'true';
+            const fromCreate = urlParams.get('fromCreate') === 'true';
+
+            if (saved && fromCreate) {
+                const $notification = $('#successNotification');
+                $notification.fadeIn(300);
+
+                setTimeout(() => {
+                    $notification.fadeOut(500);
+                }, 5000);
+
+                // Limpiar la URL
+                window.history.replaceState({}, '', window.location.pathname);
+
+                // Añadir entrada al historial
+                window.history.pushState({backToList: true}, '', window.location.pathname);
+
+                // Al pulsar atrás => enviar a list
+                window.addEventListener('popstate', function (event) {
+                    if (event.state && event.state.backToList) {
+                        window.location.href = '/plantilles-web/template/styles';
+                    }
+                });
+            }
+
+            const saveButton = document.getElementById("saveButton");
+
+            if (saveButton) {
+                saveButton.addEventListener("click", async () => {
+                    const code = document.querySelector('input[name="code"]').value.trim();
+                    const name = document.querySelector('input[name="name"]').value.trim();
+                    const rules = document.querySelector('textarea[name="rules"]').value;
+
+                    const ensLocalSelect = document.querySelector('select[name="ensLocal"]');
+                    const selectedEnsLocalId = ensLocalSelect.value;
+
+                    const ensLocalData = {
+                        id: selectedEnsLocalId && selectedEnsLocalId.trim() !== "" ? selectedEnsLocalId : "",
+                        nom: selectedEnsLocalId && selectedEnsLocalId.trim() !== "" ?
+                            (ensLocalSelect.options[ensLocalSelect.selectedIndex]?.text || "") : ""
+                    };
+
+                    if (!code || !name) {
+                        alert('Cal omplir tots els camps obligatoris');
+                        return;
+                    }
+
+                    const styleData = {
+                        code: code,
+                        name: name,
+                        rules: rules,
+                        ensLocal: ensLocalData
+                    };
+
+                    const idInput = document.querySelector('input[name="id"]');
+                    const isEdit = idInput && idInput.value;
+
+                    if (isEdit) {
+                        styleData.id = parseInt(idInput.value);
+                    }
+
+                    try {
+                        const response = await fetch('/plantilles-web/template/styles/save2', {
+                            method: isEdit ? 'PUT' : 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(styleData)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Error al guardar l\'estil');
+                        }
+
+                        const result = await response.json();
+
+                        if (result.item && result.item.id) {
+                            const redirectUrl = '/plantilles-web/template/styles/edit/' + result.item.id + '?saved=true&fromCreate=true';
+                            window.location.replace(redirectUrl);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error: No ha sigut possible guardar l\'estil correctament');
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+
+
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>
