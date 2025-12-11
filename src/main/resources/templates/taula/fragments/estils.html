@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:psd="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+
+<div class="container-fluid px-4" style="max-width: 100%;">
+    <div th:fragment="header(titol)">
+
+        <div id="deleteNotification"
+             style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;
+                background-color: #28a745; color: white; padding: 15px 20px;
+                border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <i class="fa fa-check-circle mr-2"></i>
+            <strong>Estil eliminat correctament!</strong>
+        </div>
+
+        <div class="list-header">
+            <h2 th:text="${titol}"></h2>
+            <div class="text-right mb-3">
+                <a th:href="@{/template/styles/create}" class="btn blue-bg" title="Crear estil">
+                    <i class="fa fa-plus-circle"></i>
+                    Nou estil
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox-content" id="app" th:fragment="list(page)">
+        <form th:action="@{/template/styles}" method="get" id="filterForm">
+            <!-- Mantener parámetros de paginación -->
+            <input type="hidden" name="page" th:value="${param.page}"/>
+            <input type="hidden" name="size" th:value="${param.size}"/>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover table-sm table-sort align-middle">
+                    <thead>
+                    <tr>
+                        <th psd:table-sort="code">
+                            <div class="text-center">Codi</div>
+                            <input type="text" name="searchCode" th:value="${searchCode}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per codi..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th psd:table-sort="name">
+                            <div class="text-center">Nom</div>
+                            <input type="text" name="searchName" th:value="${searchName}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per nom..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th>
+                            <div class="text-center">Ens Local</div>
+                            <input type="text" name="searchEnsLocal" th:value="${searchEnsLocal}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per ens local..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th class="text-center">Accions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="style : ${page.content}">
+                        <td th:text="${style.code}"/>
+                        <td th:text="${style.name}"/>
+                        <td th:text="${style.ensLocal != null ? style.ensLocal.nom : '-'}"/>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-1">
+                                <a th:href="@{/template/styles/edit/{id}(id=${style.id})}"
+                                   class="btn blue-bg btn-sm mr-1"
+                                   title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm mr-1"
+                                        title="Eliminar"
+                                        th:onclick="'deleteStyle(' + ${style.id} + ')'">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <th:block
+                th:insert="~{dipta-layouts/main/pagination :: links( page = ${page}, pageNumbers = ${pageNumbers} ) }"></th:block>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const deleted = urlParams.get('deleted') === 'true';
+
+                if (deleted) {
+                    const $notification = $('#deleteNotification');
+                    $notification.fadeIn(300);
+
+                    setTimeout(() => {
+                        $notification.fadeOut(500);
+                    }, 5000);
+
+                    // Limpiar la URL
+                    window.history.replaceState({}, '', window.location.pathname);
+                }
+
+                document.querySelectorAll("th input").forEach(input => {
+                    input.addEventListener("click", e => e.stopPropagation());
+                    input.addEventListener("focus", e => e.stopPropagation());
+                });
+
+                window.addEventListener('pageshow', function(event) {
+                    if (event.persisted) {
+                        window.location.reload();
+                    }
+                });
+            });
+            // noinspection JSUnusedGlobalSymbols
+            function deleteStyle(id) {
+                if (confirm('Estàs segur que vols eliminar aquest estil?')) {
+                    fetch('/plantilles-web/template/styles/delete/' + id, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                window.location.href = '/plantilles-web/template/styles?deleted=true';
+                            } else {
+                                alert('Error eliminant l\'estil');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error eliminant l\'estil');
+                        });
+                }
+            }
+        </script>
+
+    </div>
+
+    <footer>
+        <th:block th:insert="~{dipta-layouts/main/pagination :: resum( page = ${page} ) }"></th:block>
+    </footer>
+</div>
+</body>
+</html>

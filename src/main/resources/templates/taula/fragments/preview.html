@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div th:fragment="header(titol)">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2 th:text="${titol}">Vista previa de plantilla</h2>
+        </div>
+        <div class="col-lg-2">
+            <div class="title-action">
+                <a class="btn btn-white btn-sm" onclick="window.history.back();">
+                    <i class="fa fa-arrow-left"></i> Tornar
+                </a>
+                <a class="btn btn-primary btn-sm" onclick="window.print();">
+                    <i class="fa fa-file-pdf-o"></i> Generar PDF
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== LIST (CONTENIDO PRINCIPAL) ===== -->
+<div th:fragment="list(template)">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 th:text="${template.name}">Contingut de la plantilla</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <!-- Contenedor con dimensiones de página -->
+                        <div th:if="${template.pageDimensions}"
+                             class="grid-container"
+                             style="position: relative; background: white; border: 1px solid #ddd; margin: 20px auto; overflow: hidden;"
+                             th:style="'width: 692px; min-height: 990px;'">
+
+                            <div class="grid"
+                                 style="position: relative; width: 100%; height: 930px;">
+                                <!-- El contenido se renderizará vía JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Mensaje si no hay dimensiones -->
+                        <div class="alert alert-warning" th:if="${template.pageDimensions == null}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            No s'han definit les dimensions de pàgina per a aquesta plantilla
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        console.log('Script cargado');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log('DOMContentLoaded disparado');
+
+            // Obtener el template desde el modelo de Thymeleaf
+            const template = /*[[${template}]]*/ null;
+            console.log('Template recibido:', template);
+
+            if (!template) {
+                console.error('Template es null o undefined');
+                alert('Error: No se recibió el template');
+                return;
+            }
+
+            if (!template.id) {
+                console.error('Template no tiene ID:', template);
+                alert('Error: El template no tiene ID');
+                return;
+            }
+
+            console.log('Todo OK, haciendo fetch...');
+
+            // Hacer POST al endpoint para procesar el template
+            fetch('/plantilles-web/template/process-template', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(template)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.item) {
+                        renderProcessedTemplate(data.item);
+                    } else {
+                        console.error('No se recibió template procesado');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error procesando el template: ' + error.message);
+                });
+        });
+
+    </script>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>
