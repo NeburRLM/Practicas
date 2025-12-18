@@ -1,0 +1,10 @@
+     _ _       _                  _
+  __| (_)_ __ | |_ __ _        __| | ___ _ __ ___   ___
+ / _` | | '_ \| __/ _` |_____ / _` |/ _ \ '_ ` _ \ / _ \
+| (_| | | |_) | || (_| |_____| (_| |  __/ | | | | | (_) |
+ \__,_|_| .__/ \__\__,_|      \__,_|\___|_| |_| |_|\___/
+        |_|
+${spring.application.name} ${application.version}
+Powered by Spring Boot ${spring-boot.version}
+
+# TODO: Personalitzar banner a https://devops.datenkollektiv.de/banner.txt/index.html o https://patorjk.com/software/taag/ (font big, ntgreek, slant, standard, llistat de fonts: http://www.figlet.org/examples.html)
