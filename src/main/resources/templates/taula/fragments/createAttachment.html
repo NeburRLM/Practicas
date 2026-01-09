@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+
+</head>
+<body>
+
+<div th:fragment="list(page, url)">
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Nou adjunt</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form id="attachmentForm">
+
+                            <input th:if="${isEdit != null && isEdit}" type="hidden" name="id"
+                                   th:value="${attachment.id}">
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Codi:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="code"
+                                           th:value="${attachment != null ? attachment.code : ''}"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Nom adjunt:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="name"
+                                           th:value="${attachment != null ? attachment.name : ''}"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label">Seleccionar
+                                    fitxer:</label>
+                                <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <div class="custom-file">
+                                        <input type="file"
+                                               class="custom-file-input"
+                                               id="fileInput"
+                                               name="file"
+                                               th:required="${isEdit == null || !isEdit}"
+                                               oninvalid="this.setCustomValidity('Cal seleccionar un arxiu.')"
+                                               oninput="setCustomValidity('')">
+                                        <label class="custom-file-label" for="fileInput">
+                    <span th:text="${attachment != null && attachment.fileName != null ? attachment.fileName : 'Cap arxiu seleccionat'}">
+                        Cap arxiu seleccionat
+                    </span>
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted" th:if="${isEdit != null && isEdit}">
+                                        Deixa en blanc si no vols canviar l'arxiu actual
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group row">
+                                <div class="col-lg-4 col-md-6 col-sm-8 col-12 offset-lg-2 offset-md-3 offset-sm-2">
+                                    <div class="d-flex flex-column flex-sm-row">
+                                        <a th:href="@{/attachments}" class="btn btn-white btn-sm mb-2 mb-sm-0">
+                                            <i class="fa fa-ban"></i> Cancel·lar
+                                        </a>
+                                        <button class="btn btn-primary btn-sm ml-sm-2" type="button" id="saveButton">
+                                            <i class="fa fa-save"></i>
+                                            <span th:text="${isEdit != null && isEdit ? 'Actualitzar' : 'Desar'}">Desar</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Actualizar label del archivo
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function () {
+                    this.nextElementSibling.querySelector('span').textContent = this.files[0]?.name || 'Cap arxiu seleccionat';
+                });
+            }
+
+            const saveButton = document.getElementById("saveButton");
+
+            if (saveButton) {
+                saveButton.addEventListener("click", async () => {
+                    const code = document.querySelector('input[name="code"]').value.trim();
+                    const name = document.querySelector('input[name="name"]').value.trim();
+                    const fileInput = document.querySelector('input[name="file"]');
+
+                    if (!code || !name) {
+                        alert('Cal omplir tots els camps obligatoris');
+                        return;
+                    }
+
+                    if (!fileInput.files[0] && !document.querySelector('input[name="id"]')) {
+                        alert('Cal seleccionar un arxiu');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('code', code);
+                    formData.append('name', name);
+                    if (fileInput.files[0]) {
+                        formData.append('file', fileInput.files[0]);
+                    }
+
+                    const idInput = document.querySelector('input[name="id"]');
+                    const isEdit = idInput && idInput.value;
+
+                    if (isEdit) {
+                        formData.append('id', idInput.value);
+                    }
+
+                    try {
+                        const response = await fetch('/plantilles-web/template/attachments/save2', {
+                            method: isEdit ? 'PUT' : 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            if (errorText.includes('No es permet')) {
+                                alert('Error: ' + errorText);
+                            } else {
+                                alert('Error al guardar l\'adjunt');
+                            }
+                            return;
+                        }
+
+                        const result = await response.json();
+
+                        if (result.item && result.item.id) {
+                            alert('Èxit: L\'adjunt s\'ha guardat correctament');
+                            const redirectUrl = '/plantilles-web/attachments/edit/' + result.item.id;
+                            window.location.replace(redirectUrl);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error: No ha sigut possible guardar l\'adjunt correctament');
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

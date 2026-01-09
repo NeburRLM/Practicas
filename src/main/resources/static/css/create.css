@@ -1,0 +1,6 @@
+#collapseVariables.show {
+    display: flex !important;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+}
