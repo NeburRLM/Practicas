@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Crear Estil</title>
+</head>
+<body>
+
+<div th:fragment="list(page, url)">
+    <div class="ibox">
+        <div class="ibox-title d-flex align-items-center" style="padding: 10px 20px;">
+            <h5 class="mr-auto" th:text="${isEdit != null && isEdit ? 'Edició estil codi: ' + style.code : 'Nou estil'}">Nou estil</h5>
+            <div class="mx-0 pt-2 pb-2">
+                <a th:href="@{/styles}" class="btn btn-default btn-sm">
+                    <i class="fa fa-ban"></i> Cancel·lar
+                </a>
+                <button th:if="${isEdit != null && isEdit && style.id != null}"
+                        type="button"
+                        class="btn btn-danger btn-sm ml-2"
+                        th:onclick="'deleteStyle(' + ${style.id} + ')'">
+                    <i class="fa fa-trash"></i> Eliminar
+                </button>
+                <button class="btn btn-primary btn-sm ml-2" type="submit" form="styleForm" id="saveButton">
+                    <i class="fa fa-save"></i>
+                    <span th:text="${isEdit != null && isEdit ? 'Actualitzar' : 'Desar'}">Desar</span>
+                </button>
+            </div>
+        </div>
+
+
+        <div class="ibox-content">
+            <form id="styleForm">
+                <input th:if="${isEdit != null && isEdit}" type="hidden" name="id" th:value="${style.id}">
+                <div class="form-group row">
+                    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label"
+                           for="codeInput">Codi:</label>
+                    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                        <input type="text"
+                               class="form-control"
+                               id="codeInput"
+                               name="code"
+                               placeholder="Introdueix el codi..."
+                               th:value="${style != null ? style.code : ''}"
+                               required
+                               oninvalid="this.setCustomValidity('Cal introduir el codi de l\'estil.')"
+                               oninput="setCustomValidity('')">
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label"
+                           for="nameInput">Nom:</label>
+                    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                        <input type="text"
+                               class="form-control"
+                               id="nameInput"
+                               name="name"
+                               placeholder="Introdueix el nom..."
+                               th:value="${style != null ? style.name : ''}"
+                               required
+                               oninvalid="this.setCustomValidity('Cal introduir el nom de l\'estil.')"
+                               oninput="setCustomValidity('')">
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="ensLocalSelect">Ens
+                        Local:</label>
+                    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                        <select class="form-control" name="ensLocal" id="ensLocalSelect">
+                            <option value="" selected hidden>-- Selecciona un ens local --</option>
+                            <option value=""></option>
+                            <option th:if="${style != null && style.ensLocal != null}"
+                                    th:value="${style.ensLocal.id}"
+                                    th:text="${style.ensLocal.nom}"
+                                    selected></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="rulesTextarea">Regles:</label>
+                    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+                                    <textarea class="form-control"
+                                              name="rules"
+                                              id="rulesTextarea"
+                                              rows="10"
+                                              placeholder="Introdueix les regles..."
+                                              th:text="${style != null ? style.rules : ''}"
+                                              required
+                                              style="resize: none;"
+                                              oninvalid="this.setCustomValidity('Cal introduir les regles de l\'estil.')"
+                                              oninput="setCustomValidity('')">
+                                    ></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script th:src="@{/scripts/createStyle.js}"></script>
+</div>
+
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>
