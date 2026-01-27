@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:psd="http://www.w3.org/1999/xhtml" lang="ca">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Adjunts</title>
+</head>
+<body>
+
+<div class="container-fluid px-4" style="max-width: 100%;">
+    <div th:fragment="header(titol)">
+
+        <div class="list-header">
+            <div class="text-right mb-3">
+                <a th:href="@{/attachments/create}" class="btn blue-bg" title="Crear adjunt">
+                    <i class="fa fa-plus-circle"></i>
+                    Nou adjunt
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox-content" id="app" th:fragment="list(page)">
+        <form th:action="@{/attachments}" method="get" id="filterForm">
+            <input type="hidden" name="page" th:value="${param.page}"/>
+            <input type="hidden" name="size" th:value="${param.size}"/>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover table-sm table-sort align-middle">
+                    <thead>
+                    <tr>
+                        <th psd:table-sort="code">
+                            <div class="text-center">Codi</div>
+                            <input type="text" name="searchCode" th:value="${searchCode}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per codi..."
+                                   aria-label="Filtrar per codi"
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th psd:table-sort="name">
+                            <div class="text-center">Nom</div>
+                            <input type="text" name="searchName" th:value="${searchName}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per nom..."
+                                   aria-label="Filtrar per nom"
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th psd:table-sort="fileName">
+                            <div class="text-center">Nom Fitxer</div>
+                            <input type="text" name="searchFileName" th:value="${searchFileName}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per nom fitxer..."
+                                   aria-label="Filtrar per nom fitxer"
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th class="text-center">Imatge</th>
+                        <th class="text-center">Accions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="attachment : ${page.content}">
+                        <td th:text="${attachment.code}"/>
+                        <td th:text="${attachment.name}"/>
+                        <td th:text="${attachment.fileName}"/>
+                        <td class="text-center">
+                            <img th:if="${attachment.url != null}"
+                                 th:src="${attachment.url + '?t=' + #temporals.format(#temporals.createNow(), 'yyyyMMddHHmmss')}"
+                                 alt="Imatge"
+                                 style="max-width: 50px; max-height: 50px;"/>
+                            <span th:unless="${attachment.url != null}">-</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-1">
+                                <a th:href="@{/attachments/edit/{id}(id=${attachment.id})}"
+                                   class="btn blue-bg btn-sm mr-1"
+                                   title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <button type="button"
+                                   class="btn btn-danger btn-sm mr-1"
+                                   title="Eliminar"
+                                   th:onclick="'deleteAttachment(' + ${attachment.id} + ')'">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <th:block
+                th:insert="~{dipta-layouts/main/pagination :: links( page = ${page}, pageNumbers = ${pageNumbers} ) }"></th:block>
+        <script th:src="@{/scripts/commonLists.js}"></script>
+        <script type="module" th:src="@{/scripts/attachments/attachments-global.js}"></script>
+
+    </div>
+
+    <footer>
+        <th:block th:insert="~{dipta-layouts/main/pagination :: resum( page = ${page} ) }"></th:block>
+    </footer>
+</div>
+</body>
+</html>

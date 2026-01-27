@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <title th:text="${title}">MA3 - The Future</title>
+    <meta charset="UTF-8"/>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div th:fragment="header(titol)">
+    <div class="d-flex justify-content-end align-items-center">
+        <div>
+            <button type="button" class="btn btn-sm btn-primary" onclick="generatePdf()">
+                <i class="fa fa-file-pdf-o"></i> Generar PDF
+            </button>
+            <a th:href="@{/templates/edit/{id}(id=${template.id})}"
+               class="btn btn-sm btn-success"
+               title="Editar">
+                <i class="fa fa-pencil"></i> Editar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="list(page, url)">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <!-- Columna esquerra: PDF Preview -->
+            <div class="col-lg-8">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-file-text-o"></i> Previsualització PDF</h5>
+                    </div>
+                    <div class="ibox-content p-0">
+                        <div th:if="${template.pageDimensions}"
+                             class="bg-light p-3"
+                             id="pdfViewerContainer"
+                             style="height: calc(100vh - 140px); min-height: 920px; overflow-y: auto; overflow-x: auto;">
+
+                            <!-- Pàgina inicial buida -->
+                            <div class="bg-white shadow-sm mx-auto mb-4 position-relative"
+                                 style="width: 210mm; height: 297mm; border: 1px solid #e7eaec;">
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                                    <i class="fa fa-file-text-o mb-3" style="font-size: 5rem; opacity: 0.3;"></i>
+                                    <span>Genera una prova per veure la previsualització</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning m-3" th:if="${template.pageDimensions == null}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            No s'han definit les dimensions de pàgina
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna dreta: Variables -->
+            <div class="col-lg-4">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-list-alt"></i> Variables de la plantilla</h5>
+                        <div class="ibox-tools">
+                        </div>
+                    </div>
+                    <div class="ibox-content p-0">
+
+                        <!-- Taula de variables -->
+                        <div style="max-height: calc(100vh - 380px); overflow-y: auto;">
+                            <table class="table table-hover mb-0" style="table-layout: fixed;">
+                                <colgroup>
+                                    <col style="width: 40%">
+                                    <col style="width: 20%">
+                                    <col style="width: 40%">
+                                </colgroup>
+                                <thead class="bg-light border-bottom">
+                                <tr>
+                                    <th class="border-0 py-3 px-3 text-uppercase small font-weight-bold text-muted">
+                                        Variable
+                                    </th>
+                                    <th class="border-0 py-3 px-2 text-uppercase small font-weight-bold text-muted text-center">
+                                        Tipus
+                                    </th>
+                                    <th class="border-0 py-3 px-3 text-uppercase small font-weight-bold text-muted text-center">
+                                        Valor
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:if="${template != null and template.variables != null}">
+                                    <tr th:each="variable : ${template.variables}">
+                                        <td class="align-middle border-0 py-3 px-3">
+                                            <div class="font-weight-bold text-dark text-truncate"
+                                                 style="max-width: 120px;"
+                                                 th:text="${variable.name}"
+                                                 th:title="${variable.name}">
+                                                Variable Name
+                                            </div>
+                                        </td>
+                                        <td class="align-middle border-0 py-3 px-2 text-center">
+                                                <span class="badge badge-primary px-2 py-1 text-uppercase"
+                                                      style="font-size: 10px;"
+                                                      th:text="${typeMap[variable.type]}">
+                                                    Type
+                                                </span>
+                                        </td>
+                                        <td class="align-middle border-0 py-3 px-3">
+                                            <label>
+                                                <input type="text"
+                                                       class="form-control form-control-sm variable-input"
+                                                       th:attr="data-variable-id=${variable.id},
+                                                                        data-variable-name=${variable.name},
+                                                                        data-variable-type=${variable.type}"
+                                                       th:value="${defaultValues[variable.type]}"
+                                                       placeholder="Valor..."
+                                                       autocomplete="off">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                <th:block
+                                        th:unless="${template != null and template.variables != null and !template.variables.isEmpty()}">
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted border-0 py-5">
+                                            <i class="fa fa-inbox d-block mb-3"
+                                               style="font-size: 3rem; opacity: 0.2;"></i>
+                                            <span class="small">No hi ha variables definides</span>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Secció de importar valors -->
+                        <div class="border-top p-3">
+                            <div class="mb-3">
+                                <label class="btn btn-outline-secondary btn-sm mb-0">
+                                    <i class="fa fa-folder-open"></i> Triar arxiu JSON
+                                    <input type="file"
+                                           id="fileInputValors"
+                                           class="d-none"
+                                           accept=".json"
+                                           onchange="updateFileLabel(this)">
+                                </label>
+                                <span class="ml-2 small text-muted" id="fileName">Cap arxiu seleccionat</span>
+                            </div>
+
+                            <button type="button"
+                                    class="btn btn-success btn-sm btn-block"
+                                    onclick="importValors()">
+                                <i class="fa fa-upload"></i> Importar Valors
+                            </button>
+                        </div>
+
+                        <!-- Botó generar prova -->
+                        <div class="p-3 pt-0">
+                            <button type="button"
+                                    class="btn btn-primary btn-block"
+                                    onclick="generateProva()">
+                                <i class="fa fa-play"></i> Generar Prova
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        // Dades servidor
+        window.currentTemplate = /*[[${template}]]*/ null;
+        window.currentTemplateId = /*[[${plantillaId}]]*/ null;
+    </script>
+    <script type="module" th:src="@{/scripts/templates/preview.js}"></script>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer class="text-center text-muted mt-4" th:text="${txt}">
+    </footer>
+</div>
+
+</body>
+</html>

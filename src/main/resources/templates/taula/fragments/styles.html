@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:psd="http://www.w3.org/1999/xhtml" lang="ca">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Estils</title>
+</head>
+<body>
+
+<div class="container-fluid px-4" style="max-width: 100%;">
+    <div th:fragment="header(titol)">
+
+        <div class="list-header">
+            <div class="text-right mb-3">
+                <a th:href="@{/styles/create}" class="btn blue-bg" title="Crear estil">
+                    <i class="fa fa-plus-circle"></i>
+                    Nou estil
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox-content" id="app" th:fragment="list(page)">
+        <form th:action="@{/styles}" method="get" id="filterForm">
+            <!-- Mantenir paràmetres de paginació -->
+            <input type="hidden" name="page" th:value="${param.page}"/>
+            <input type="hidden" name="size" th:value="${param.size}"/>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover table-sm table-sort align-middle">
+                    <thead>
+                    <tr>
+                        <th psd:table-sort="code">
+                            <div class="text-center">Codi</div>
+                            <input type="text" name="searchCode" th:value="${searchCode}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per codi..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th psd:table-sort="name">
+                            <div class="text-center">Nom</div>
+                            <input type="text" name="searchName" th:value="${searchName}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per nom..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th>
+                            <div class="text-center">Ens Local</div>
+                            <input type="text" name="searchEnsLocal" th:value="${searchEnsLocal}"
+                                   class="form-control form-control-sm"
+                                   placeholder="Filtrar per ens local..."
+                                   style="font-size: 0.9em;"
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </th>
+                        <th class="text-center">Accions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="style : ${page.content}">
+                        <td th:text="${style.code}"/>
+                        <td th:text="${style.name}"/>
+                        <td th:text="${style.ensLocal != null ? style.ensLocal.nom : '-'}"/>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-1">
+                                <a th:href="@{/styles/edit/{id}(id=${style.id})}"
+                                   class="btn blue-bg btn-sm mr-1"
+                                   title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm mr-1"
+                                        title="Eliminar"
+                                        th:onclick="'deleteStyle(' + ${style.id} + ')'">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <th:block
+                th:insert="~{dipta-layouts/main/pagination :: links( page = ${page}, pageNumbers = ${pageNumbers} ) }"></th:block>
+
+        <script th:src="@{/scripts/commonLists.js}"></script>
+        <script type="module" th:src="@{/scripts/styles/styles-global.js}"></script>
+    </div>
+
+    <footer>
+        <th:block th:insert="~{dipta-layouts/main/pagination :: resum( page = ${page} ) }"></th:block>
+    </footer>
+</div>
+</body>
+</html>
