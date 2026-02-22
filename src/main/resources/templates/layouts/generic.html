@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{dipta-layouts/main(appName='dipta-demo', appAbbr='DEM')}">
+<head>
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<!-- TODO : Es pot definir el menú directament al layout o en una altra plantilla, però és preferible fer-ho a cat.dipta.demo.menu.DemoMenuService
+  -- En cas d'optar per la opció de DemoMenuService, esborrar aquest bloc.
+<th:block layout:fragment="sidemenu">
+    <div>Home</div>
+</th:block>
+-->
+
+<th:block layout:fragment="post-body">
+    <script th:src="@{/scripts/main.js}"></script>
+</th:block>
+
+</body>
+</html>

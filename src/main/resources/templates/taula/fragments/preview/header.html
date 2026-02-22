@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- HEADER DE PREVIEW -->
+<div th:fragment="previewHeader" class="d-flex justify-content-end align-items-center">
+    <div>
+        <!-- Botó Generar PDF -->
+        <button type="button" class="btn btn-sm btn-primary" onclick="generatePdf()">
+            <i class="fa fa-file-pdf-o"></i> Generar PDF
+        </button>
+
+        <!-- Botó Editar -->
+        <a th:href="@{/templates/edit/{id}(id=${template.id})}"
+           class="btn btn-sm btn-success"
+           title="Editar">
+            <i class="fa fa-pencil"></i> Editar
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

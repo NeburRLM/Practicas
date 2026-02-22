@@ -1,0 +1,32 @@
+GET http://localhost:8080/dipta-demo/rest/validacio/nif?nif=12345678S
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+
+###
+GET http://localhost:8080/dipta-demo/rest/validacio/nif?nif=12345678Z
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+
+###
+POST {{app-url}}/rest/validacio/nif
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+Content-Type: application/json
+
+{
+  "nif": "12345678S"
+}
+
+###
+POST http://localhost:8080/dipta-demo/rest/validacio/nif
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+Content-Type: application/json
+
+{
+}
+
+###
+POST http://localhost:8080/dipta-demo/rest/validacio/nif
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+Content-Type: application/json
+
+{
+  "nif": "12345678Z"
+}

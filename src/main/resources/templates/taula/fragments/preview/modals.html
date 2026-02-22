@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- MODAL D'ERRORS HTML -->
+<div th:fragment="htmlErrorsModal" class="modal fade" id="htmlErrorsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">❌ Possibles errors trobats</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body"
+                 id="htmlErrorsContent"
+                 style="max-height: 60vh; overflow-y: auto;">
+                <!-- Errors dinàmicss -->
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <p class="mb-0 font-weight-bold">
+                    Aquests errors poden causar que la previsualització es vegi malament.
+                    Si us plau,
+                    <a th:href="@{/templates/edit/{id}(id=${template.id})}"
+                       class="text-primary"
+                       style="text-decoration: underline;">
+                        revisa'ls a l'editor HTML
+                    </a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

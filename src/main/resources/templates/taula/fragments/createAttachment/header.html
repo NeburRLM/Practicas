@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- HEADER DE ATTACHMENT -->
+<div th:fragment="attachmentHeader" class="ibox-title d-flex align-items-center" style="padding: 10px 20px;">
+    <!-- Título -->
+    <h5 class="mr-auto"
+        th:text="${isEdit != null and isEdit} ? 'Edició adjunt codi: ' + ${attachment.code} : 'Nou adjunt'">
+        Nou adjunt
+    </h5>
+
+    <!-- Botons d'acció -->
+    <div class="mx-0 pt-2 pb-2">
+        <!-- Botón Cancel·lar -->
+        <a th:href="@{/attachments}" class="btn btn-default btn-sm">
+            <i class="fa fa-ban"></i> Cancel·lar
+        </a>
+
+        <!-- Botó Eliminar (només en mode edició) -->
+        <button th:if="${isEdit != null and isEdit and attachment.id != null}"
+                type="button"
+                class="btn btn-danger btn-sm ml-2"
+                th:onclick="'deleteAttachment(' + ${attachment.id} + ', {afterDelete: \'redirect\', redirectUrl: \'/plantilles-web/attachments\'})'">
+            <i class="fa fa-trash"></i> Eliminar
+        </button>
+
+        <!-- Botó Guardar/Actualitzar -->
+        <button class="btn btn-primary btn-sm ml-sm-2" type="submit" id="saveButton">
+            <i class="fa fa-save"></i>
+            <span th:text="${isEdit != null and isEdit} ? 'Actualitzar' : 'Desar'">Desar</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

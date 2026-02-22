@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: plantilles-web
+  config:
+    import: configserver:${dipta.config.url}
+external:
+  api:
+    # url-local: http://localhost:8080/plantidoc/rest
+    # url-dev: https://dev01.intranet.dtgna:8843/plantidoc/rest
+
+plantilles:
+  connection-timeout: 1000000000
+  read-timeout: 1000000000
+  long-connection-timeout: 1000000000
+  long-read-timeout: 1000000000
+  url: http://localhost:8080/plantilles/rest
+  user: rest-servei
+  password: r3$T1nP3aC3
+
+---
+spring:
+  jpa:
+    defer-datasource-initialization: true
+server:
+  port: 8081
+  name: http://localhost:${server.port}
+dipta:
+  datasource:
+#   TODO: CHANGE DB CONFIG, KEEP h2 only for testing purposes. Change dependencies on build.gradle
+    type: h2
+#    instance: XXX
+#    user: XXX
+#    pass: XXX
+
+  security:
+    ma3:
+      app-id: plantilles
+      stop-attributes: userCertificate,certificateSubject,certificateType,certificatePolicyId
+      load-clients: true
+    cas:
+      unsecure:
+        - /public/**
+        - /static/**
+        - /css/**
+        - /js/**
+        - /node/**
+        - /theme/**
+
+  layout: # TODO : configurar layout segons necessitats
+    #logout-disabled: true
+    profile-selector: NONE
+    #profile-selector: ENS
+    #profile-selector: UNIT
+    menu-permission-type: DEFAULT
+
+logging:
+  level:
+    root: info
+    org.springframework.security: info
+    cat.dipta: trace
+    org.apache.http: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: generate-openapi
+server:
+  port: 8765
+  name: http://localhost:8765
+
+

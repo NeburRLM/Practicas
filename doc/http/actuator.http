@@ -1,0 +1,3 @@
+### actuator
+GET {{app-url}}/rest/actuator
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=

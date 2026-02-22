@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "plantilles.url",
+      "type": "java.lang.String",
+      "description": "URL base del servei Plantilles."
+    },
+    {
+      "name": "plantilles.user",
+      "type": "java.lang.String",
+      "description": "Usuari d'autenticació per a les crides al servei Plantilles."
+    },
+    {
+      "name": "plantilles.password",
+      "type": "java.lang.String",
+      "description": "Contrasenya d'autenticació per a les crides al servei Plantilles."
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- CONTINGUT DEL FORMULARI -->
+<div th:fragment="styleFormContent" class="ibox-content">
+    <!-- Camp ID ocult (només en mode edició) -->
+    <input th:if="${isEdit != null and isEdit}"
+           type="hidden"
+           name="id"
+           th:value="${style.id}">
+
+    <!-- Camp Codi -->
+    <div th:replace="~{taula/fragments/createStyle/form :: codeField}"></div>
+
+    <div class="hr-line-dashed"></div>
+
+    <!-- Camp Nom -->
+    <div th:replace="~{taula/fragments/createStyle/form :: nameField}"></div>
+
+    <div class="hr-line-dashed"></div>
+
+    <!-- Camp Ens Local -->
+    <div th:replace="~{taula/fragments/createStyle/form :: ensLocalField}"></div>
+
+    <div class="hr-line-dashed"></div>
+
+    <!-- Camp Regles -->
+    <div th:replace="~{taula/fragments/createStyle/form :: rulesField}"></div>
+</div>
+
+<!-- Fragment: Camp Codi -->
+<div th:fragment="codeField" class="form-group row">
+    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="codeInput">
+        Codi:
+    </label>
+    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+        <input type="text"
+               class="form-control"
+               id="codeInput"
+               name="code"
+               placeholder="Introdueix el codi..."
+               th:value="${style != null ? style.code : ''}"
+               required
+               oninvalid="this.setCustomValidity('Cal introduir el codi de l\'estil.')"
+               oninput="setCustomValidity('')">
+    </div>
+</div>
+
+<!-- Fragment: Camp Nom -->
+<div th:fragment="nameField" class="form-group row">
+    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="nameInput">
+        Nom:
+    </label>
+    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+        <input type="text"
+               class="form-control"
+               id="nameInput"
+               name="name"
+               placeholder="Introdueix el nom..."
+               th:value="${style != null ? style.name : ''}"
+               required
+               oninvalid="this.setCustomValidity('Cal introduir el nom de l\'estil.')"
+               oninput="setCustomValidity('')">
+    </div>
+</div>
+
+<!-- Fragment: Camp Ens Local -->
+<div th:fragment="ensLocalField" class="form-group row">
+    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="ensLocalSelect">
+        Ens Local:
+    </label>
+    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+        <select class="form-control" name="ensLocal" id="ensLocalSelect">
+            <option value="" selected hidden>-- Selecciona un ens local --</option>
+            <option value=""></option>
+            <option th:if="${style != null and style.ensLocal != null}"
+                    th:value="${style.ensLocal.id}"
+                    th:text="${style.ensLocal.nom}"
+                    selected>
+            </option>
+        </select>
+    </div>
+</div>
+
+<!-- Fragment: Camp Regles -->
+<div th:fragment="rulesField" class="form-group row">
+    <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-form-label" for="rulesTextarea">
+        Regles:
+    </label>
+    <div class="col-lg-10 col-md-9 col-sm-8 col-12">
+        <textarea class="form-control"
+                  name="rules"
+                  id="rulesTextarea"
+                  rows="10"
+                  placeholder="Introdueix les regles..."
+                  th:text="${style != null ? style.rules : ''}"
+                  required
+                  style="resize: none;"
+                  oninvalid="this.setCustomValidity('Cal introduir les regles de l\'estil.')"
+                  oninput="setCustomValidity('')">
+        </textarea>
+    </div>
+</div>
+
+</body>
+</html>

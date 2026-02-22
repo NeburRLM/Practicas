@@ -1,0 +1,9 @@
+### Open a protected page, redirect to CAS (SingleSignOn)
+GET {{app-url}}
+
+### Open a public page, show page
+GET {{app-url}}/public/
+
+### Open a data table page
+GET {{app-url}}/taula/list
+

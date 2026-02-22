@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div th:fragment="header(titol)">
+    <div class="d-flex justify-content-end align-items-center">
+        <!-- Modals -->
+        <div th:replace="~{taula/fragments/createTemplate/modals :: styleModal}"></div>
+        <div th:replace="~{taula/fragments/createTemplate/modals :: configModal}"></div>
+        <div th:replace="~{taula/fragments/createTemplate/modals :: propietatsModal}"></div>
+        <div th:replace="~{taula/fragments/createTemplate/modals :: saveModal}"></div>
+    </div>
+</div>
+
+<!-- ===== EDITOR PRINCIPAL ===== -->
+<div th:fragment="list(page, url)">
+    <div class="ibox-content">
+        <div class="container-fluid h-100" style="overflow: hidden;">
+            <div class="row h-100 d-flex align-items-stretch">
+                <!-- Editor HTML -->
+                <div th:replace="~{taula/fragments/createTemplate/editor :: htmlEditor}"></div>
+
+                <!-- Panel de Variables -->
+                <div th:replace="~{taula/fragments/createTemplate/variables :: variablesPanel}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" th:src="@{/scripts/templates/templates-global.js}"></script>
+    <script type="module" th:src="@{/scripts/templates/createTemplate.js}"></script>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer class="text-center text-muted mt-4" th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

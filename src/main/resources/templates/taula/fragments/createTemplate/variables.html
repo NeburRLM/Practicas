@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+
+<body>
+
+<!-- PANEL DE VARIABLES -->
+<div th:fragment="variablesPanel" class="col-md-4 d-flex flex-column"
+     style="max-height: 100%; overflow: hidden; max-width: 100%;">
+    <div class="card flex-grow-1 h-100" style="border: none;">
+        <div class="card-body d-flex flex-column h-100 mt-0 p-1" style="min-height: 0;">
+            <!-- Buscador y controls -->
+            <div th:replace="~{taula/fragments/createTemplate/variables :: searchBar}"></div>
+
+            <!-- Modals -->
+            <div th:replace="~{taula/fragments/createTemplate/variables :: variableModals}"></div>
+
+            <!-- Llista de variables -->
+            <div th:replace="~{taula/fragments/createTemplate/variables :: variableList}"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Barra de Cerca -->
+<div th:fragment="searchBar" class="d-flex align-items-center mb-2 mt-0">
+    <div class="input-group input-group-sm flex-grow-1 mr-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="fa fa-search"></i>
+            </span>
+        </div>
+        <input type="text" class="form-control form-control-sm"
+               placeholder="Cercar variables"
+               id="searchVariable"
+               aria-label="Cercar variables">
+    </div>
+
+    <!-- Botó Importar -->
+    <button type="button" class="btn btn-sm btn-primary mr-1"
+            data-toggle="modal" data-target="#importModelModal"
+            title="Importar de model">
+        <i class="fa fa-upload"></i>
+    </button>
+
+    <!-- Botón Nova Variable -->
+    <button type="button" class="btn btn-sm btn-primary"
+            data-toggle="modal" data-target="#variableModal"
+            title="Nova variable">
+        <i class="fa fa-plus"></i>
+    </button>
+</div>
+
+<!-- Fragment: Modals de Variables -->
+<div th:fragment="variableModals">
+    <!-- Modal Nova Variable -->
+    <div class="modal fade" id="variableModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <i class="fa fa-plus text-primary"></i> Nova variable
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form id="variableForm">
+                    <div class="modal-body bg-light">
+                        <div class="form-group">
+                            <label for="variableName" class="font-weight-bold text-secondary">
+                                Nom de la variable:
+                            </label>
+                            <input type="text" class="form-control"
+                                   id="variableName" name="variableName"
+                                   placeholder="Introdueix el nom..." required
+                                   oninvalid="this.setCustomValidity('Cal introduir el nom de la variable.')"
+                                   oninput="setCustomValidity('')">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="variableType" class="font-weight-bold text-secondary">Tipus:</label>
+                            <select class="form-control" id="variableType" name="variableType" required
+                                    oninvalid="this.setCustomValidity('Cal seleccionar un tipus.')"
+                                    oninput="setCustomValidity('')">
+                                <option value="">-- Selecciona un tipus --</option>
+                                <option value="short">short</option>
+                                <option value="int">int</option>
+                                <option value="long">long</option>
+                                <option value="float">float</option>
+                                <option value="double">double</option>
+                                <option value="char">char</option>
+                                <option value="boolean">boolean</option>
+                                <option value="String">String</option>
+                                <option value="List">List</option>
+                                <option value="Map">Map</option>
+                                <option value="Data">Data</option>
+                                <option value="Html">Html</option>
+                                <option value="csv_html">taula csv o html</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-white border-0">
+                        <button type="button" class="btn btn-light border" data-dismiss="modal">
+                            <i class="fa fa-ban mr-1"></i> Cancel·lar
+                        </button>
+                        <button type="submit" class="btn btn-primary shadow-sm">
+                            <i class="fa fa-check-circle mr-1"></i> Afegir
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Variable -->
+    <div class="modal fade" id="editVariableModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <i class="fa fa-edit text-primary"></i> Editar variable
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <form id="editVariableForm">
+                    <input type="hidden" id="editVariableIndex">
+                    <div class="modal-body bg-light">
+                        <div class="form-group">
+                            <label for="editVariableName">Nom de la variable:</label>
+                            <input type="text" class="form-control"
+                                   id="editVariableName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editVariableType">Tipus:</label>
+                            <select class="form-control" id="editVariableType" required>
+                                <option value="">-- Selecciona un tipus --</option>
+                                <option value="short">short</option>
+                                <option value="int">int</option>
+                                <option value="long">long</option>
+                                <option value="float">float</option>
+                                <option value="double">double</option>
+                                <option value="char">char</option>
+                                <option value="boolean">boolean</option>
+                                <option value="String">String</option>
+                                <option value="List">List</option>
+                                <option value="Map">Map</option>
+                                <option value="Data">Data</option>
+                                <option value="Html">Html</option>
+                                <option value="csv_html">taula csv o html</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">
+                            Cancel·lar
+                        </button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Importar de Model -->
+    <div class="modal fade" id="importModelModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <i class="fa fa-upload text-primary"></i> Importar variables del model
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form id="importModelForm">
+                    <div class="modal-body bg-light">
+                        <div class="form-group">
+                            <label for="modelId" class="font-weight-bold text-secondary">
+                                ID del model:
+                            </label>
+                            <input type="number" class="form-control"
+                                   id="modelId" name="modelId"
+                                   placeholder="Introdueix l'ID del model..."
+                                   required min="1"
+                                   oninvalid="this.setCustomValidity('Cal introduir un ID vàlid del model.')"
+                                   oninput="setCustomValidity('')">
+                            <small class="form-text text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                Introdueix l'identificador numèric del model del qual vols importar les variables.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-white border-0">
+                        <button type="button" class="btn btn-light border" data-dismiss="modal">
+                            <i class="fa fa-ban mr-1"></i> Cancel·lar
+                        </button>
+                        <button type="submit" class="btn btn-primary shadow-sm">
+                            <i class="fa fa-upload mr-1"></i> Importar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Llista de Variables -->
+<div th:fragment="variableList"
+     class="list-group flex-grow-1 mb-3 border border-right-0"
+     style="overflow-y: auto; font-size: 0.9em; max-height: calc(100vh - 300px);">
+    <ul class="list-group" id="variableList">
+        <th:block th:if="${template != null and template.variables != null}">
+            <li th:each="variable : ${template.variables}"
+                th:attr="data-variable-id=${variable.id}"
+                class="list-group-item d-flex align-items-center"
+                style="padding: 0.5rem;">
+
+                <!-- Botons d'acció -->
+                <div class="btn-group btn-group-sm mr-1" role="group">
+                    <button type="button" class="btn btn-success mr-1 add-variable-btn"
+                            title="Afegir" style="padding: 0.25rem 0.4rem;">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary mr-1 edit-variable-btn"
+                            title="Editar" style="padding: 0.25rem 0.4rem;">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger mr-1 delete-variable-btn"
+                            title="Eliminar" style="padding: 0.25rem 0.4rem;">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+
+                <!-- Nom de la variable -->
+                <span class="variable-name flex-grow-1"
+                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; font-size: 0.80rem;"
+                      th:text="${variable.name}"
+                      th:title="${variable.name}">Variable Name</span>
+
+                <!-- Badge amb el tipus -->
+                <span class="badge badge-secondary"
+                      style="font-size: 0.7rem;"
+                      th:text="${typeMap[variable.type]}">Type</span>
+            </li>
+        </th:block>
+    </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- HEADER DEL STYLE -->
+<div th:fragment="styleHeader" class="ibox-title d-flex align-items-center" style="padding: 10px 20px;">
+    <!-- Título -->
+    <h5 class="mr-auto"
+        th:text="${isEdit != null and isEdit} ? 'Edició estil codi: ' + ${style.code} : 'Nou estil'">
+        Nou estil
+    </h5>
+
+    <!-- Botons d'acció -->
+    <div class="mx-0 pt-2 pb-2">
+        <!-- Botó Cancel·lar -->
+        <a th:href="@{/styles}" class="btn btn-default btn-sm">
+            <i class="fa fa-ban"></i> Cancel·lar
+        </a>
+
+        <!-- Botó Eliminar (només en mode edició) -->
+        <button th:if="${isEdit != null and isEdit and style.id != null}"
+                type="button"
+                class="btn btn-danger btn-sm ml-2"
+                th:onclick="'deleteStyle(' + ${style.id} + ')'">
+            <i class="fa fa-trash"></i> Eliminar
+        </button>
+
+        <!-- Botó Guardar/Actualitzar -->
+        <button class="btn btn-primary btn-sm ml-2" type="submit" id="saveButton">
+            <i class="fa fa-save"></i>
+            <span th:text="${isEdit != null and isEdit} ? 'Actualitzar' : 'Desar'">Desar</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

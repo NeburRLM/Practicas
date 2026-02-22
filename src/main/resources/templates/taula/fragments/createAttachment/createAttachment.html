@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Crear Adjunt</title>
+</head>
+<body>
+
+<!-- ===== FORMULARI PRINCIPAL ===== -->
+<div th:fragment="list(page, url)">
+    <div class="ibox">
+        <form id="attachmentForm">
+            <!-- Header -->
+            <div th:replace="~{taula/fragments/createAttachment/header :: attachmentHeader}"></div>
+
+            <!-- Contingut -->
+            <div th:replace="~{taula/fragments/createAttachment/form :: attachmentFormContent}"></div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" th:src="@{/scripts/attachments/attachments-global.js}"></script>
+    <script type="module" th:src="@{/scripts/attachments/createAttachment.js}"></script>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

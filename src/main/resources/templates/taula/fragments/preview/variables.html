@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<body>
+
+<!-- PANEL DE VARIABLES -->
+<div th:fragment="variablesPanel" class="col-lg-4">
+    <div class="ibox">
+        <!-- Títol -->
+        <div class="ibox-title">
+            <h5><i class="fa fa-list-alt"></i> Variables de la plantilla</h5>
+            <div class="ibox-tools"></div>
+        </div>
+
+        <!-- Contingut -->
+        <div class="ibox-content p-0">
+            <!-- Taula de variables -->
+            <div th:replace="~{taula/fragments/preview/variables :: variablesTable}"></div>
+
+            <!-- Secció importar valors -->
+            <div th:replace="~{taula/fragments/preview/variables :: importSection}"></div>
+
+            <!-- Botó generar prova -->
+            <div th:replace="~{taula/fragments/preview/variables :: generateButton}"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Taula de Variables -->
+<div th:fragment="variablesTable" style="max-height: calc(100vh - 380px); overflow-y: auto;">
+    <table class="table table-hover mb-0" style="table-layout: fixed;">
+        <colgroup>
+            <col style="width: 40%">
+            <col style="width: 20%">
+            <col style="width: 40%">
+        </colgroup>
+
+        <!-- Capçalera -->
+        <thead class="bg-light border-bottom">
+        <tr>
+            <th class="border-0 py-3 px-3 text-uppercase small font-weight-bold text-muted">
+                Variable
+            </th>
+            <th class="border-0 py-3 px-2 text-uppercase small font-weight-bold text-muted text-center">
+                Tipus
+            </th>
+            <th class="border-0 py-3 px-3 text-uppercase small font-weight-bold text-muted text-center">
+                Valor
+            </th>
+        </tr>
+        </thead>
+
+        <!-- Cos -->
+        <tbody>
+        <!-- Variables existents -->
+        <th:block th:if="${template != null and template.variables != null}">
+            <tr th:each="variable : ${template.variables}">
+                <td class="align-middle border-0 py-3 px-3">
+                    <div class="font-weight-bold text-dark text-truncate"
+                         style="max-width: 120px;"
+                         th:text="${variable.name}"
+                         th:title="${variable.name}">
+                        Variable Name
+                    </div>
+                </td>
+                <td class="align-middle border-0 py-3 px-2 text-center">
+                        <span class="badge badge-primary px-2 py-1 text-uppercase"
+                              style="font-size: 10px;"
+                              th:text="${typeMap[variable.type]}">
+                            Type
+                        </span>
+                </td>
+                <td class="align-middle border-0 py-3 px-3">
+                    <label class="w-100 mb-0">
+                            <textarea class="form-control form-control-sm variable-input"
+                                      th:attr="data-variable-id=${variable.id},
+                                            data-variable-name=${variable.name},
+                                            data-variable-type=${variable.type}"
+                                      th:text="${defaultValues[variable.type]}"
+                                      placeholder="Valor..."
+                                      autocomplete="off"
+                                      rows="1"
+                                      style="resize: none; height: 40px; overflow-x: auto; overflow-y: hidden; white-space: nowrap;">
+                            </textarea>
+                    </label>
+                </td>
+            </tr>
+        </th:block>
+
+        <!-- Estat buit -->
+        <th:block th:unless="${template != null and template.variables != null and !template.variables.isEmpty()}">
+            <tr>
+                <td colspan="3" class="text-center text-muted border-0 py-5">
+                    <i class="fa fa-inbox d-block mb-3" style="font-size: 3rem; opacity: 0.2;"></i>
+                    <span class="small">No hi ha variables definides</span>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+
+<!-- Fragment: Secció Importar Valors -->
+<div th:fragment="importSection" class="border-top p-3">
+    <div class="mb-3">
+        <label class="btn btn-outline-secondary btn-sm mb-0">
+            <i class="fa fa-folder-open"></i> Triar arxiu JSON
+            <input type="file"
+                   id="fileInputValors"
+                   class="d-none"
+                   accept=".json"
+                   onchange="updateFileLabel(this)">
+        </label>
+        <span class="ml-2 small text-muted" id="fileName">Cap arxiu seleccionat</span>
+    </div>
+
+    <button type="button"
+            class="btn btn-success btn-sm btn-block"
+            onclick="importValors()">
+        <i class="fa fa-upload"></i> Importar Valors
+    </button>
+</div>
+
+<!-- Fragment: Botó Generar Prova -->
+<div th:fragment="generateButton" class="p-3 pt-0">
+    <button type="button"
+            class="btn btn-primary btn-block"
+            onclick="generateProva()">
+        <i class="fa fa-play"></i> Generar Prova
+    </button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Crear Estil</title>
+</head>
+<body>
+
+<!-- ===== FORMULARI PRINCIPAL ===== -->
+<div th:fragment="list(page, url)">
+    <div class="ibox">
+        <form id="styleForm">
+            <!-- Header -->
+            <div th:replace="~{taula/fragments/createStyle/header :: styleHeader}"></div>
+
+            <!-- Contingut -->
+            <div th:replace="~{taula/fragments/createStyle/form :: styleFormContent}"></div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" th:src="@{/scripts/styles/styles-global.js}"></script>
+    <script type="module" th:src="@{/scripts/styles/createStyle.js}"></script>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

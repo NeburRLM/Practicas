@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{dipta-layouts/main(appName='MA3 - The Future', appAbbr='MA3', pageTitle=${title})}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<header th:insert="taula/fragments/styles.html :: header(titol=${title}) "></header>
+
+<body>
+
+<ol class="breadcrumb" layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/templates}">Home</a></li>
+    <li class="breadcrumb-item active"><strong th:text="${title}">Crear Plantilla</strong></li>
+</ol>
+
+<div layout:fragment="content">
+    <header th:insert="~{taula/fragments/createTemplate/createTemplate.html :: header(titol=${title})}"></header>
+    <div th:replace="~{taula/fragments/createTemplate/createTemplate.html :: list(page=${page}, url = ${pageUrl})}"></div>
+    <div th:replace="~{taula/fragments/createTemplate/createTemplate.html :: footer(txt=${totalText})}"></div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <title th:text="${title}">MA3 - The Future</title>
+    <meta charset="UTF-8"/>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div th:fragment="header(titol)">
+    <div th:replace="~{taula/fragments/preview/header :: previewHeader}"></div>
+</div>
+
+<!-- ===== CONTINGUT PRINCIPAL ===== -->
+<div th:fragment="list(page, url)">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <!-- Columna esquerra: PDF Preview -->
+            <div th:replace="~{taula/fragments/preview/pdf-viewer :: pdfViewer}"></div>
+
+            <!-- Columna dreta: Variables -->
+            <div th:replace="~{taula/fragments/preview/variables :: variablesPanel}"></div>
+        </div>
+    </div>
+
+    <!-- Modal d'errors HTML -->
+    <div th:replace="~{taula/fragments/preview/modals :: htmlErrorsModal}"></div>
+
+    <!-- Scripts -->
+    <script th:inline="javascript">
+        // Dades de servidor
+        window.currentTemplate = /*[[${template}]]*/ null;
+        window.currentTemplateId = /*[[${plantillaId}]]*/ null;
+    </script>
+    <script type="module" th:src="@{/scripts/templates/preview.js}"></script>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div th:fragment="footer(txt)">
+    <footer class="text-center text-muted mt-4" th:text="${txt}"></footer>
+</div>
+
+</body>
+</html>

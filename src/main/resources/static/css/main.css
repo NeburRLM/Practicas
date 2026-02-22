@@ -1,0 +1,35 @@
+h5 {
+    text-decoration: blink;
+}
+
+html, body {
+    height: 100%;
+}
+
+.container-fluid {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ibox-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+@media (max-width: 992px) {
+    .btn-sm i {
+        font-size: 12px;
+    }
+    .btn-sm {
+        padding: 3px 6px;
+    }
+    table.table th,
+    table.table td {
+        font-size: 0.875rem;
+    }
+    .list-header h2 {
+        font-size: 1.25rem;
+    }
+}

@@ -1,0 +1,15 @@
+GET {{app-url}}/rest/greet
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+
+###
+GET {{app-url}}/rest/greet?name=Diputació
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+
+###
+GET {{app-url}}/rest/greet/multi
+Authorization: Basic cmVzdC1zZXJ2ZWk6cjMkVDFuUDNhQzM=
+
+### SHOULD FAIL (401)
+GET {{app-url}}/rest/greet
+
+###

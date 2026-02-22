@@ -1,0 +1,79 @@
+plugins {
+	id 'org.springframework.boot' version "${springBootVersion}"
+	id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+}
+
+apply from: "$diptaReposScript"
+apply from: "$diptaBasicsScript"
+apply from: "$diptaAppBasicsScript"
+apply from: "$diptaOpenapiScript"
+
+ext { // TODO: canviar per les versions necessàries.
+	diptaBomVersion = "$diptaBomVersion"
+	springCloudVersion = "$springCloudVersion"
+}
+apply from: "$diptaBomScript"
+
+group = 'cat.dipta'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(javaVersion)
+	}
+}
+
+dependencies {
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // necessari per a fer validacions.
+
+	implementation 'org.springframework.cloud:spring-cloud-config-client' // configuració externalitzada
+
+	implementation 'cat.dipta.starters:dipta-logger-starter' // logs en format Diputació de Tarragona
+	implementation 'cat.dipta.starters:dipta-errorhandling-starter' // Tractament d'errors en el format Diputació de Tarragona
+	implementation 'cat.dipta.starters:dipta-datasource-starter' // Definició del datasource de manera estàndard
+//	implementation 'cat.dipta.starters:dipta-ldap-starter' // Configuració de la seguretat bàsica a l'endpoint /rest
+	implementation 'cat.dipta.starters:dipta-actuator-starter' // Production-ready features spring-boot actuator
+	implementation 'cat.dipta.starters:dipta-userinfo-starter' // serveis per al tractament de les dades d'usuari.
+	implementation 'cat.dipta.starters:dipta-cas-starter' // Configuració de la seguretat Single Sign On CAS ** Activate when starter is ready **
+	implementation 'cat.dipta.starters:dipta-layout-starter' // Configuració de la part web visual
+	implementation 'cat.dipta.starters:dipta-adm-electronica-client-starter' // Configuració dels paquets d'administració electrònica
+
+	implementation 'cat.dipta:dipta-spring-utils' // Classes d'utilitats
+
+	compileOnly 'io.swagger.core.v3:swagger-annotations:2.2.8' // a eliminar
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Starter JPA
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+	// TODO: dependències per a connectar amb oracle. eliminar si no hi ha connexió a BD oracle
+	implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '18.3.0.0'
+	implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '18.3.0.0'
+
+	// TODO: dependències per a connectar amb bd h2. eliminar si no s'usa h2 en runtime.
+	implementation group: 'com.h2database', name: 'h2', version: '2.2.224' // BD - H2
+    implementation 'org.jsoup:jsoup:1.22.1'
+
+//
+//	TESTING DEPENDENCIES
+//
+   // TODO:	Use H2 for testing purposes
+	testImplementation group: 'com.h2database', name: 'h2', version: '2.2.224' // BD - H2
+
+	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+	testImplementation group: 'org.spockframework', name: 'spock-core', version: "${spockVersion}"
+	testImplementation group: 'org.spockframework', name: 'spock-spring', version: "${spockVersion}"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-config'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// GEB
+//	testImplementation group: 'org.gebish', name: 'geb-spock', version: "$gebVersion"
+//	testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-api', version: "$seleniumVersion"
+//	testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: "$seleniumVersion"
+//	testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: "$seleniumVersion"
+//	testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-firefox-driver', version: "$seleniumVersion"
+//	testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-remote-driver', version: "$seleniumVersion"
+//	testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.3.1' // 5.3.2
+//	testImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5'
+	//testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-devtools', version: '4.0.0-rc-1'
+
+}

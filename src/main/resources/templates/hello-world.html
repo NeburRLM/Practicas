@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/generic(pageTitle='Dipta-Demo', activeMenu='home')}">
+<head>
+    <title>Greetings</title>
+</head>
+<body>
+
+
+<!-- Content -->
+<section layout:fragment="content">
+    <div class="ibox ">
+        <div class="ibox-title">
+            <h5>Usuari: <span th:text="${nomUsuari}" /> </h5>
+        </div>
+        <div class="ibox-content">
+            <p>
+                <blockquote>The server said: <span th:text="${greet}"></span>!</blockquote>
+            </p>
+        </div>
+    </div>
+
+</section>
+
+</body>
+</html>

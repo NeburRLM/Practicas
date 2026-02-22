@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+
+<body>
+
+<!-- MODAL: Assignar Estil -->
+<div th:fragment="styleModal" class="modal fade" id="styleModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-paint-brush text-primary"></i> Assignar estil
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="styleForm">
+                <div class="modal-body bg-light">
+                    <div class="form-group">
+                        <label for="stylePlantilla" class="font-weight-bold text-secondary">Estil:</label>
+                        <select class="form-control" id="stylePlantilla" name="stylePlantilla"> <!--required
+                        oninvalid="this.setCustomValidity('Cal seleccionar un element de la llista.')"
+                        oninput="setCustomValidity('')"-->
+                            <option value="" selected hidden>-- Selecciona un estil --</option>
+                            <option value=""></option>
+                            <!--Selector-->
+                            <option th:each="style : ${styles}"
+                                    th:value="${style.id}"
+                                    th:text="${style.code}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-white border-0">
+                    <button type="button" class="btn btn-light border" data-dismiss="modal">
+                        <i class="fa fa-ban mr-1"></i> Cancel·lar
+                    </button>
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="fa fa-check-circle mr-1"></i> Aplicar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Configuració de Plantilla -->
+<div th:fragment="configModal" class="modal fade" id="configModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-cog text-primary"></i> Configuració de la plantilla
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="configForm">
+                <div class="modal-body bg-light">
+                    <!-- Informació bàsica -->
+                    <div class="row">
+                        <!-- Nom -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="configNom" class="font-weight-bold text-secondary">
+                                    <i class="fa fa-file-text-o text-primary mr-1"></i> Nom:
+                                </label>
+                                <input type="text" class="form-control" id="configNom" name="configNom"
+                                       th:value="${template != null ? template.name : ''}"
+                                       placeholder="Nom de la plantilla..." required
+                                       oninvalid="this.setCustomValidity('Cal introduir el nom.')"
+                                       oninput="setCustomValidity('')">
+                            </div>
+                        </div>
+                        <!-- Codi -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="configCodi" class="font-weight-bold text-secondary">
+                                    <i class="fa fa-code text-primary mr-1"></i> Codi:
+                                </label>
+                                <input type="text" class="form-control" id="configCodi" name="configCodi"
+                                       th:value="${template != null ? template.code : ''}"
+                                       placeholder="Codi de la plantilla..." required
+                                       oninvalid="this.setCustomValidity('Cal introduir el codi.')"
+                                       oninput="setCustomValidity('')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dimensions -->
+                    <div th:replace="~{taula/fragments/createTemplate/modals :: dimensionsForm}"></div>
+
+                    <!-- Marges -->
+                    <div th:replace="~{taula/fragments/createTemplate/modals :: margesForm}"></div>
+                </div>
+
+                <div class="modal-footer bg-white border-0">
+                    <button type="button" class="btn btn-light border" data-dismiss="modal">
+                        <i class="fa fa-ban mr-1"></i> Cancel·lar
+                    </button>
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="fa fa-save mr-1"></i> Aplicar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Dimensions Form -->
+<div th:fragment="dimensionsForm">
+    <div class="row">
+        <!-- Amplada -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="configAmplada" class="font-weight-bold text-secondary">
+                    <i class="fa fa-arrows-h text-primary mr-1"></i> Amplada:
+                </label>
+                <input type="number" class="form-control" id="configAmplada" name="configAmplada"
+                       th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.width : 210}"
+                       min="1" required
+                       oninvalid="this.setCustomValidity('Cal introduir l\'amplada.')"
+                       oninput="setCustomValidity('')">
+            </div>
+        </div>
+        <!-- Allargada -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="configAllargada" class="font-weight-bold text-secondary">
+                    <i class="fa fa-arrows-v text-primary mr-1"></i> Allargada:
+                </label>
+                <input type="number" class="form-control" id="configAllargada" name="configAllargada"
+                       th:value="${template != null && template.pageDimensions != null ? template.pageDimensions.height : 297}"
+                       min="1" required
+                       oninvalid="this.setCustomValidity('Cal introduir l\'allargada.')"
+                       oninput="setCustomValidity('')">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Marges Form -->
+<div th:fragment="margesForm">
+    <div class="row">
+        <div class="col-12">
+            <label class="font-weight-bold text-secondary mb-2">
+                <i class="fa fa-arrows text-primary mr-1"></i> Marges:
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3"
+             th:each="marge : ${ {'Superior': 'Top', 'Inferior': 'Bottom', 'Esquerre': 'Left', 'Dret': 'Right'} }">
+            <div class="form-group">
+                <label th:for="'configMarge' + ${marge.value}" class="text-secondary"
+                       th:text="${marge.key} + ':'"></label>
+                <input type="number" class="form-control"
+                       th:id="'configMarge' + ${marge.value}"
+                       th:name="'configMarge' + ${marge.value}"
+                       th:value="${template != null && template.pageDimensions != null ? template.pageDimensions['margin' + marge.value] : (marge.value == 'Top' || marge.value == 'Bottom' ? 18 : 14)}"
+                       min="0" required>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Propietats -->
+<div th:fragment="propietatsModal" class="modal fade" id="propietatsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-info-circle text-info"></i> Propietats de la plantilla
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body bg-light">
+                <div th:if="${template == null}" class="alert alert-info">
+                    <i class="fa fa-exclamation-circle mr-2"></i>
+                    Encara no s'ha desat la plantilla. Desa-la primer per veure les propietats.
+                </div>
+
+                <div th:if="${template != null}">
+                    <div th:replace="~{taula/fragments/createTemplate/modals :: propietatsGenerals}"></div>
+                    <div th:replace="~{taula/fragments/createTemplate/modals :: propietatsHistorial}"></div>
+                    <div th:replace="~{taula/fragments/createTemplate/modals :: propietatsDimensions}"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer bg-white border-0">
+                <button type="button" class="btn btn-light border" data-dismiss="modal">
+                    <i class="fa fa-times mr-1"></i> Tancar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Propietats Generals -->
+<div th:fragment="propietatsGenerals">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="text-navy mb-3">
+                <i class="fa fa-info-circle mr-2"></i>Informació General
+            </h5>
+            <hr class="mt-0 mb-3"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3" th:each="prop : ${ {'ID': 'id', 'Nom': 'name', 'Codi': 'code'} }">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i th:class="${prop.key == 'ID' ? 'fa fa-hashtag' : (prop.key == 'Nom' ? 'fa fa-file-text-o' : 'fa fa-code')} + ' text-info mr-1'"></i>
+                    <span th:text="${prop.key} + ':'"></span>
+                </label>
+                <p class="form-control-plaintext" th:text="${template[prop.value]}">-</p>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-paint-brush text-info mr-1"></i> Estil:
+                </label>
+                <p class="form-control-plaintext" th:text="${templateStyle != null ? templateStyle.name : '-'}">-</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Propietats Historial -->
+<div th:fragment="propietatsHistorial">
+    <div class="row mb-4 mt-4">
+        <div class="col-12">
+            <h5 class="text-navy mb-3">
+                <i class="fa fa-history mr-2"></i>Historial
+            </h5>
+            <hr class="mt-0 mb-3"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-user text-success mr-1"></i> Creat per:
+                </label>
+                <p class="form-control-plaintext" th:text="${template.creatorUser ?: '-'}">-</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-building-o text-success mr-1"></i> Unitat Creadora:
+                </label>
+                <p class="form-control-plaintext" th:text="${template.creatorUnit ?: '-'}">-</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-calendar-plus-o text-success mr-1"></i> Data de Creació:
+                </label>
+                <p class="form-control-plaintext"
+                   th:text="${template.dateCreated != null ? #dates.format(template.dateCreated, 'dd/MM/yyyy HH:mm') : '-'}">
+                    -</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3"></div>
+
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-user-circle text-warning mr-1"></i> Actualitzat per:
+                </label>
+                <p class="form-control-plaintext" th:text="${template.updateUser ?: '-'}">-</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-calendar text-warning mr-1"></i> Última Modificació:
+                </label>
+                <p class="form-control-plaintext"
+                   th:text="${template.lastUpdated != null ? #dates.format(template.lastUpdated, 'dd/MM/yyyy HH:mm') : '-'}">
+                    -</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragment: Propietats Dimensions -->
+<div th:fragment="propietatsDimensions">
+    <div class="row mb-4 mt-4">
+        <div class="col-12">
+            <h5 class="text-navy mb-3">
+                <i class="fa fa-file-o mr-2"></i>Dimensions de Pàgina
+            </h5>
+            <hr class="mt-0 mb-3"/>
+        </div>
+    </div>
+
+    <div th:if="${template.pageDimensions != null}">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <label class="font-weight-bold text-secondary">
+                        <i class="fa fa-arrows-h text-primary mr-1"></i> Amplada:
+                    </label>
+                    <p class="form-control-plaintext">
+                        <span th:text="${template.pageDimensions.width}">-</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <label class="font-weight-bold text-secondary">
+                        <i class="fa fa-arrows-v text-primary mr-1"></i> Allargada:
+                    </label>
+                    <p class="form-control-plaintext">
+                        <span th:text="${template.pageDimensions.height}">-</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 mb-2">
+                <label class="font-weight-bold text-secondary">
+                    <i class="fa fa-arrows text-primary mr-1"></i> Marges:
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-6 mb-3"
+                 th:each="marge : ${ {'Superior': 'Top', 'Inferior': 'Bottom', 'Esquerre': 'Left', 'Dret': 'Right'} }">
+                <div class="form-group">
+                    <label class="text-secondary small" th:text="${marge.key} + ':'"></label>
+                    <p class="form-control-plaintext">
+                        <span th:text="${template.pageDimensions['margin' + marge.value]}">-</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Si no hi ha dimensions -->
+    <div th:if="${template.pageDimensions == null}" class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <i class="fa fa-exclamation-triangle mr-2"></i>
+                No s'han definit dimensions de pàgina
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Desar Plantilla -->
+<div th:fragment="saveModal" class="modal fade" id="saveModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-save text-primary"></i> Desar plantilla
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tancar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="saveForm">
+                <div class="modal-body bg-light">
+                    <div class="form-group">
+                        <label for="nomPlantilla" class="font-weight-bold text-secondary">
+                            <i class="fa fa-file-text-o text-primary mr-1"></i> Nom de la plantilla
+                        </label>
+                        <input type="text" class="form-control" id="nomPlantilla" name="nomPlantilla"
+                               th:value="${template != null ? template.name : ''}"
+                               placeholder="Introdueix el nom..." required
+                               oninvalid="this.setCustomValidity('Cal introduir el nom de la plantilla.')"
+                               oninput="setCustomValidity('')">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="codiPlantilla" class="font-weight-bold text-secondary">
+                            <i class="fa fa-code text-primary mr-1"></i> Codi de la plantilla
+                        </label>
+                        <input type="text" class="form-control" id="codiPlantilla" name="codiPlantilla"
+                               th:value="${template != null ? template.code : ''}"
+                               placeholder="Introdueix el codi..." required
+                               oninvalid="this.setCustomValidity('Cal introduir el codi de la plantilla.')"
+                               oninput="setCustomValidity('')">
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-white border-0">
+                    <button type="button" class="btn btn-light border" data-dismiss="modal"
+                            onclick="restoreOriginalValues()">
+                        <i class="fa fa-ban mr-1"></i> Cancel·lar
+                    </button>
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="fa fa-save mr-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

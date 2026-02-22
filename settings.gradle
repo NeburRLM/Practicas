@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+//        DESENVOLUPAMENT EXTERN
+//        maven { url "https://aplicacions-dev.dipta.cat/nexus/repository/public-ext/" }
+//        maven { url "https://aplicacions-dev.dipta.cat/nexus/repository/public-ext-snapshots/" }
+//
+//        DESENVOLUPAMENT INTERN
+        maven { url "https://sai.intranet.dtgna/nexus/content/groups/public/" }
+        maven { url "https://sai.intranet.dtgna/nexus/content/groups/public-snapshots/" }
+    }
+}
+
+rootProject.name = 'plantilles-web'
